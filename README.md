@@ -1,5 +1,5 @@
 # LSDA
-2018, DIKU @ Cph University
+2018, DIKU - Cph University
 
 # Group 4 (Emil, Frederik, Roberta, Steffen)
 
