@@ -15,7 +15,6 @@ $ cd src
 $ python scraper.py ../data/labels/train.json ../data/images/train 500
 
 
-
 ### Kaggle Link:
 #### https://www.kaggle.com/c/imaterialist-challenge-fashion-2018
 
