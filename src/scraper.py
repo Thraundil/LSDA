@@ -10,6 +10,7 @@ import sys
 import json
 import urllib3
 import multiprocessing
+import zipfile
 
 from PIL import Image
 from tqdm import tqdm
@@ -45,7 +46,7 @@ def parse_dataset(_dataset, _outdir, _max=10000000):
     :return: list of tuple containing absolute path and url of image
     """
     _fnames_urls = []
-    with open(dataset, 'r') as f:
+    with open(_dataset, 'r') as f:
         data = json.load(f)
         for image in data["images"]:
             url = image["url"]
@@ -84,6 +85,15 @@ def scrape(dataset, outdir, amount=None):
 
     sys.exit(1)
 
+def unzip(fname, datadir):
+    """
+    If the given filename does not exist, unzips a file called "<fname>.zip"
+    """
+    if not os.path.exists(fname):
+        with zipfile.ZipFile(fname + '.zip',"r") as zip_ref:
+            zip_ref.extractall(datadir)
+        
+
 if __name__ == '__main__':
     if len(sys.argv) == 3:
         # get args and create output directory
@@ -96,17 +106,21 @@ if __name__ == '__main__':
     elif len(sys.argv) == 1:
         print("No directories given, using defaults and downloading everything")
 
-        dataset = '../data/labels/train.json'
+        labels = '../data/labels/train.json'
         outdir = '../data/images/train'
-        scrape(dataset, outdir)
+        datadir = '../data/labels'
+        unzip(labels, datadir)
+        scrape(labels, outdir)
 
-        dataset = '../data/labels/validation.json'
+        labels = '../data/labels/validation.json'
         outdir = '../data/images/validation'
-        scrape(dataset, outdir)
+        unzip(labels, datadir)
+        scrape(labels, outdir)
 
-        dataset = '../data/labels/test.json'
+        labels = '../data/labels/test.json'
         outdir = '../data/images/test'
-        scrape(dataset, outdir)
+        unzip(labels, datadir)
+        scrape(labels, outdir)
     else:
         print("error: not enough arguments")
         print("usage: python scraper.py [dataset] [outdir] [amount]")
