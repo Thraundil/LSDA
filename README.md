@@ -24,3 +24,13 @@ specific directories and the amount of files to download can also be specified. 
 ### Overleaf Links
 #### Repport 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
 #### Repport 1: 
+
+### Preprocessing Steps
+#### Average Color - Steffen
+#### small grayscale images  - Emil
+#### Resize / Crop - Frederik
+
+### Model
+#### Database / other way to handle information - Roberta
+#### KNN model / evaluation - Steffen?
+#### Kaggle submission format
