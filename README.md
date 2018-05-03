@@ -34,3 +34,16 @@ specific directories and the amount of files to download can also be specified. 
 #### Database / other way to handle information - Roberta
 #### KNN model / evaluation - Steffen?
 #### Kaggle submission format
+
+### Azue
+login:
+`lsda`
+`CompetitionGroup4`
+
+Connect with 
+`ssh lsda@40.114.107.120`
+
+Source into tensorflow enviroment:
+`source lsdaenv/bin/activate`
+
+# !!! DO NOT FORGET TO TURN OFF THE SERVER !!!
