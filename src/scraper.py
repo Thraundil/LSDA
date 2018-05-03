@@ -16,7 +16,7 @@ from PIL import Image
 from tqdm import tqdm
 from urllib3.util import Retry
 
-from preprocessor import preprocess
+from constants import *
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -32,9 +32,18 @@ def download_image(fnames_and_urls):
         http = urllib3.PoolManager(retries=Retry(connect=3, read=2, redirect=3))
         response = http.request("GET", url)
         image = Image.open(io.BytesIO(response.data))
-        image = preprocess(image)
+        image = resize(image)
         image_rgb = image.convert("RGB")
         image_rgb.save(fname, format='JPEG', quality=90)
+
+def resize(img):
+    x, y = img.size
+    min_x, min_y = IMAGES_DOWNLOAD_MIN_SIZE
+    shrinkage_x = min_x / x
+    shrinkage_y = min_y / y
+    shrinkage = max(shrinkage_x, shrinkage_y)
+    img = img.resize((round(x * shrinkage), round(y * shrinkage)), Image.ANTIALIAS)
+    return img
 
 
 def parse_dataset(_dataset, _outdir, _max=10000000):
@@ -106,19 +115,19 @@ if __name__ == '__main__':
     elif len(sys.argv) == 1:
         print("No directories given, using defaults and downloading everything")
 
-        labels = '../data/labels/train.json'
-        outdir = '../data/images/train'
-        datadir = '../data/labels'
+        labels = LABEL_DIR + '/train.json'
+        outdir = RAW_IMAGES_DIR + '/train'
+        datadir = LABEL_DIR
         unzip(labels, datadir)
         scrape(labels, outdir)
 
-        labels = '../data/labels/validation.json'
-        outdir = '../data/images/validation'
+        labels = LABEL_DIR + '/validation.json'
+        outdir = RAW_IMAGES_DIR + '/validation'
         unzip(labels, datadir)
         scrape(labels, outdir)
 
-        labels = '../data/labels/test.json'
-        outdir = '../data/images/test'
+        labels = LABEL_DIR + '/test.json'
+        outdir = RAW_IMAGES_DIR + '/test'
         unzip(labels, datadir)
         scrape(labels, outdir)
     else:
