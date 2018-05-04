@@ -14,6 +14,11 @@ specific directories and the amount of files to download can also be specified. 
 `$ cd src`  
 `$ python scraper.py ../data/labels/train.json ../data/raw_images/train 500`
 
+### Using the Framework
+The framework is hopefully an easier way to access and keep track of our data, and try out classifiers. You can try out the current test version by:
+`$ cd src`  
+`$ python framework.py`  
+
 
 ### Kaggle Link:
 #### https://www.kaggle.com/c/imaterialist-challenge-fashion-2018
