@@ -82,6 +82,11 @@ def scrape(dataset, outdir, amount=None):
     # parse json dataset file
     fnames_urls = parse_dataset(dataset, outdir)
 
+    image_files = os.listdir(outdir)
+    if len(image_files):
+        last_id = sorted([int(image_file.split('.')[0]) for image_file in image_files])[-1]
+        fnames_urls = fnames_urls[last_id:]
+
     # shorten the amount
     if amount is not None:
         fnames_urls = fnames_urls[:amount]
