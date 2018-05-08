@@ -29,7 +29,7 @@ def extract_annotations():
 def create_avg_colors_npz():
   if not os.path.exists(os.path.join(FEATURES_DIR,'train')):
     os.makedirs(os.path.join(FEATURES_DIR,'train'))
-  avg_colors = np.empty((TOTAL_N_TRAIN,3))
+  avg_colors = np.empty((TOTAL_N_TRAIN+1,3))
   avg_colors[:] = np.nan
   print('Creating average colors file: %s..'%os.path.join(FEATURES_DIR,'train','avg_colors'))
   np.savez_compressed(os.path.join(FEATURES_DIR,'train','avg_colors'),avg_colors)
