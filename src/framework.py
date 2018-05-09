@@ -9,7 +9,8 @@ from sklearn.metrics import f1_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 
-from constants import LABEL_DIR, RAW_IMAGES_DIR, FEATURES_DIR, TOTAL_N_TRAIN
+from src.constants import LABEL_DIR, RAW_IMAGES_DIR, FEATURES_DIR, TOTAL_N_TRAIN
+
 
 def extract_annotations():
   file_path = os.path.join(LABEL_DIR,'train.json')
@@ -25,7 +26,8 @@ def extract_annotations():
       annotations[int(img['imageId']),int(label)] = 1
   print('Saving annotations to %s file..'%os.path.join(LABEL_DIR,'annotations.npz'))
   np.savez_compressed(os.path.join(LABEL_DIR,'annotations'),annotations)
-  
+
+
 def create_avg_colors_npz():
   if not os.path.exists(os.path.join(FEATURES_DIR,'train')):
     os.makedirs(os.path.join(FEATURES_DIR,'train'))
@@ -33,7 +35,8 @@ def create_avg_colors_npz():
   avg_colors[:] = np.nan
   print('Creating average colors file: %s..'%os.path.join(FEATURES_DIR,'train','avg_colors'))
   np.savez_compressed(os.path.join(FEATURES_DIR,'train','avg_colors'),avg_colors)
-  
+
+
 def calc_and_save_avg_colors(image_ids):
   avg_colors = np.load(os.path.join(FEATURES_DIR,'train','avg_colors.npz'))['arr_0']
   for image_id in tqdm(image_ids,desc='Calculating Avg Colors..'):
@@ -44,22 +47,29 @@ def calc_and_save_avg_colors(image_ids):
   np.savez_compressed(os.path.join(FEATURES_DIR,'train','avg_colors'),avg_colors)
   return avg_colors
 
-class Images():
+
+class Images:
   def __init__(self, n=10000, random_state=42, train_split=0.7, features=['avg_color']):
     print('Using %s random images from your %s directory, and splitting them into train and test sets'%(n, RAW_IMAGES_DIR))
     
     self.n = n
     self.random_state = random_state
     self.train_split = train_split
-    
+
+    # load annotations
     self._annotations = None
+    # get list of shuffled image ids
     self.image_ids = self._get_image_ids(self.n, self.random_state)
+    # split image ids
     self.train_ids, self.test_ids = train_test_split(self.image_ids, train_size=self.train_split, random_state=self.random_state)
+    # save length of train and test sets
     self.n_train = len(self.train_ids)
     self.n_test = len(self.test_ids)
-    
+
+    # load features
     self.features = self._load_features(features)
-    
+
+    # turn feature matrix into a list of labels
     self.labels = np.array([np.where(labels == 1)[0] for labels in self.annotations])
 
   @property
@@ -91,13 +101,18 @@ class Images():
     return self._annotations
   
   def knn_or_gtfo(self, classifier = KNeighborsClassifier(2)):
+    """
+    runs the benchmark
+    :param classifier:
+    :return:
+    """
     print('\n')
     start_time = pd.Timestamp.now()
     classifier.fit(self.X_train, self.y_train)
     print('Predicting on training set..')
     self.y_pred_train = classifier.predict(self.X_train)
     self.y_pred_train_f1 = f1_score(self.y_train, self.y_pred_train, average='micro')
-    print('Micro F1 Score, train: %s'%self.y_pred_train_f1)
+    print('Micro F1 Score, train: %s' % self.y_pred_train_f1)
     print('Predicting on test set..')
     self.y_pred_test = classifier.predict(self.X_test)
     self.y_pred_test_f1 = f1_score(self.y_test, self.y_pred_test, average='micro')
@@ -105,6 +120,12 @@ class Images():
     print('Time taken: %s'%(pd.Timestamp.now() - start_time))
     
   def _get_image_ids(self, n, random_state):
+    """
+    reads image ids and returns a list of shuffled ids
+    :param n:
+    :param random_state:
+    :return:
+    """
     print('Getting image ids..')
     image_files = os.listdir(os.path.join(RAW_IMAGES_DIR,'train'))
     assert len(image_files) > n, 'Error: trying to use n=%s when only %s images found in directory %s'%(n,len(image_files),RAW_IMAGES_DIR)
@@ -122,8 +143,9 @@ class Images():
   def _load_features(self, features):
     print('Loading Features: %s..'%', '.join(features))
     for feature in features:
-      assert hasattr(self,feature), 'Error, could not find feature %s in class'%feature
+      assert hasattr(self, feature), 'Error, could not find feature %s in class' % feature
     if len(features):
+      # append feature matrices together
       feature_matrix = self.__getattribute__(features[0])
       for feature in features[1:]:
         feature_matrix = np.append(feature_matrix, self.__getattribute__(feature),axis=1)
@@ -136,7 +158,8 @@ class Images():
       extract_annotations()
     return np.load(os.path.join(LABEL_DIR,'annotations.npz'))['arr_0']
 
+
 if __name__ == '__main__':
   #example execution
-  images = Images(n=15000, features=['avg_color'])
+  images = Images(n=500, features=['avg_color'])
   images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
