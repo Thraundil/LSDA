@@ -2,7 +2,6 @@ import os
 import json
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from sklearn.metrics import f1_score
@@ -10,6 +9,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 
 from src.constants import LABEL_DIR, RAW_IMAGES_DIR, FEATURES_DIR, TOTAL_N_TRAIN
+from src.feature_extraction.avg_color import AvgColorFeature
 
 
 def extract_annotations():
@@ -28,28 +28,8 @@ def extract_annotations():
   np.savez_compressed(os.path.join(LABEL_DIR,'annotations'),annotations)
 
 
-def create_avg_colors_npz():
-  if not os.path.exists(os.path.join(FEATURES_DIR,'train')):
-    os.makedirs(os.path.join(FEATURES_DIR,'train'))
-  avg_colors = np.empty((TOTAL_N_TRAIN+1,3))
-  avg_colors[:] = np.nan
-  print('Creating average colors file: %s..'%os.path.join(FEATURES_DIR,'train','avg_colors'))
-  np.savez_compressed(os.path.join(FEATURES_DIR,'train','avg_colors'),avg_colors)
-
-
-def calc_and_save_avg_colors(image_ids):
-  avg_colors = np.load(os.path.join(FEATURES_DIR,'train','avg_colors.npz'))['arr_0']
-  for image_id in tqdm(image_ids,desc='Calculating Avg Colors..'):
-    if np.isnan(avg_colors[image_id].sum()):
-      avg_colors[image_id] = np.mean(plt.imread(os.path.join(RAW_IMAGES_DIR,'train',str(image_id)+'.jpg')), axis=(0,1))
-     
-  print('Saving updated average colors to %s..'%os.path.join(FEATURES_DIR,'train','avg_colors'))
-  np.savez_compressed(os.path.join(FEATURES_DIR,'train','avg_colors'),avg_colors)
-  return avg_colors
-
-
 class Images:
-  def __init__(self, n=10000, random_state=42, train_split=0.7, features=['avg_color']):
+  def __init__(self, n=10000, random_state=42, train_split=0.7, features=[]):
     print('Using %s random images from your %s directory, and splitting them into train and test sets'%(n, RAW_IMAGES_DIR))
     
     self.n = n
@@ -72,11 +52,6 @@ class Images:
     # turn feature matrix into a list of labels
     self.labels = np.array([np.where(labels == 1)[0] for labels in self.annotations])
 
-  @property
-  def avg_color(self):
-    if not '_avg_color' in self.__dict__:
-      self._avg_color = self._load_avg_color()
-    return self._avg_color
     
   @property
   def X_train(self):
@@ -132,23 +107,14 @@ class Images:
     np.random.seed(random_state)
     np.random.shuffle(image_files)
     return [int(image_file.split('.')[0]) for image_file in image_files[:n]]
-    
-  def _load_avg_color(self):
-    print('Loading Average Colors..')
-    if not os.path.isfile(os.path.join(FEATURES_DIR,'train','avg_colors.npz')):
-      create_avg_colors_npz()
-    avg_colors = calc_and_save_avg_colors(self.train_ids+self.test_ids)
-    return avg_colors
   
   def _load_features(self, features):
-    print('Loading Features: %s..'%', '.join(features))
-    for feature in features:
-      assert hasattr(self, feature), 'Error, could not find feature %s in class' % feature
+    print('Loading Features: %s..'%', '.join([feature.__class__.__name__ for feature in features]))
     if len(features):
       # append feature matrices together
-      feature_matrix = self.__getattribute__(features[0])
+      feature_matrix = features[0].get_features(self.train_ids + self.test_ids)
       for feature in features[1:]:
-        feature_matrix = np.append(feature_matrix, self.__getattribute__(feature),axis=1)
+        feature_matrix = np.append(feature_matrix, feature.get_features(self.train_ids + self.test_ids), axis=1)
     return feature_matrix
       
   def _load_annotations(self):
@@ -161,5 +127,5 @@ class Images:
 
 if __name__ == '__main__':
   #example execution
-  images = Images(n=500, features=['avg_color'])
+  images = Images(n=10000, features=[AvgColorFeature()])
   images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
