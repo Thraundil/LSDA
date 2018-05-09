@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 
 from src.constants import LABEL_DIR, RAW_IMAGES_DIR, FEATURES_DIR, TOTAL_N_TRAIN
 from src.feature_extraction.avg_color import AvgColorFeature
+from src.feature_extraction.color_histogram import ColorHistogramFeature
 
 
 def extract_annotations():
@@ -127,5 +128,5 @@ class Images:
 
 if __name__ == '__main__':
   #example execution
-  images = Images(n=10000, features=[AvgColorFeature()])
+  images = Images(n=10000, features=[AvgColorFeature(), ColorHistogramFeature()])
   images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
