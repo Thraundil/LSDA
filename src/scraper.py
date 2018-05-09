@@ -16,7 +16,7 @@ from PIL import Image
 from tqdm import tqdm
 from urllib3.util import Retry
 
-from constants import *
+from src.constants import *
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
