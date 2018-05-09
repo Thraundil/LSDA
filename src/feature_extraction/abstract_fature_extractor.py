@@ -71,6 +71,6 @@ class AbstractFeatureExtractor():
         features[image_id] = self.calculate_feature(img)
 
     # save the updated features
-    print('Saving updated %s to %s..' % (self.prefix, os.path.join(FEATURES_DIR, self.dataset, self.prefix)))
+    print('\nSaving updated %s to %s..' % (self.prefix, os.path.join(FEATURES_DIR, self.dataset, self.prefix)))
     np.savez_compressed(os.path.join(FEATURES_DIR, self.dataset, self.prefix), features)
     return features
