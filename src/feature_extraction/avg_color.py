@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 
 from constants import *
-from feature_extraction.abstract_fature_extractor import AbstractFeatureExtractor
+from feature_extraction.abstract_feature_extractor import AbstractFeatureExtractor
 
 
 class AvgColorFeature(AbstractFeatureExtractor):
@@ -15,7 +15,7 @@ class AvgColorFeature(AbstractFeatureExtractor):
     self.prefix = 'avg_colors'
 
     # dimentionallity of the feature vector
-    self.fature_dim = 3
+    self.feature_dim = 3
     return
 
   def calculate_feature(self, image: Image):

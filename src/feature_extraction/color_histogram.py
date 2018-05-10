@@ -2,7 +2,7 @@ from PIL import Image
 import cv2
 
 from constants import *
-from feature_extraction.abstract_fature_extractor import AbstractFeatureExtractor
+from feature_extraction.abstract_feature_extractor import AbstractFeatureExtractor
 
 
 class ColorHistogramFeature(AbstractFeatureExtractor):
@@ -15,7 +15,7 @@ class ColorHistogramFeature(AbstractFeatureExtractor):
 
     # dimentionallity of the feature vector
     self.BINS = 4
-    self.fature_dim = self.BINS ** 3
+    self.feature_dim = self.BINS ** 3
     return
 
   def calculate_feature(self, image: Image):
