@@ -191,3 +191,9 @@ class Images:
       print('annotations.npz not found in %s, extracting from train.json'%LABEL_DIR)
       extract_annotations()
     return np.load(os.path.join(LABEL_DIR,'annotations.npz'))['arr_0'][self.image_ids]
+    
+    
+if __name__ == '__main__':
+    images = Images(n=10000, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
+    images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
+    images.run_on_test_and_make_kaggle_sub_file(classifier = KNeighborsClassifier(3))
