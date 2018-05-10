@@ -7,6 +7,7 @@ from tqdm import tqdm
 from sklearn.metrics import f1_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
+from matplotlib import pyplot as plt
 
 from constants import LABEL_DIR, RAW_IMAGES_DIR, FEATURES_DIR, TOTAL_N_TRAIN
 from feature_extraction.avg_color import AvgColorFeature
@@ -51,9 +52,15 @@ class Images:
     self.features = self._load_features(features)
 
     # turn feature matrix into a list of labels
-    self.labels = np.array([np.where(labels == 1)[0] for labels in self.annotations])
+    self.labels = self.to_label_list(self.annotations)
 
-    
+  def to_label_list(self, n_hot):
+    """
+    transforms a n-hot-matrix into a list of labels
+    :return:
+    """
+    return np.array([np.where(labels == 1)[0] for labels in n_hot])
+
   @property
   def X_train(self):
     return self.features[self.train_ids]
@@ -87,13 +94,33 @@ class Images:
     classifier.fit(self.X_train, self.y_train)
     print('Predicting on training set..')
     self.y_pred_train = classifier.predict(self.X_train)
-    self.y_pred_train_f1 = f1_score(self.y_train, self.y_pred_train, average='micro')
-    print('Micro F1 Score, train: %s' % self.y_pred_train_f1)
+    self.y_pred_train_f1 = self._eval_result(self.y_pred_train, self.y_train, plot=False)
     print('Predicting on test set..')
     self.y_pred_test = classifier.predict(self.X_test)
-    self.y_pred_test_f1 = f1_score(self.y_test, self.y_pred_test, average='micro')
-    print('Micro F1 Score, test: %s'%self.y_pred_test_f1)
+    self.y_pred_test_f1 = self._eval_result(self.y_test, self.y_pred_test, plot=True)
     print('Time taken: %s'%(pd.Timestamp.now() - start_time))
+
+  def _eval_result(self, y_pred, y_true, plot=False):
+    score = f1_score(self.y_train, self.y_pred_train, average='micro')
+    print('Micro F1 Score: %s' % score)
+
+    if plot:
+      # determine F1-scores per label
+      y_pred = y_pred.T
+      y_true = y_true.T
+      f1_per_feature = [f1_score(y_pred[i], y_true[i]) for i in range(1, 229)]
+      feature_no = np.arange(1, 229)
+
+      plt.figure(figsize=(6, 4.5))
+      plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
+      plt.bar(feature_no, f1_per_feature)
+      plt.xlabel('Feature')
+      plt.ylabel('F1 Score')
+      plt.title('F1 score per feature')
+      #plt.show()
+      plt.savefig('../f1_per_feature.pdf')
+
+    return score
     
   def _get_image_ids(self, n, random_state):
     """
@@ -128,5 +155,5 @@ class Images:
 
 if __name__ == '__main__':
   #example execution
-  images = Images(n=1000, features=[AvgColorFeature(), ColorHistogramFeature()])
+  images = Images(n=11000, features=[AvgColorFeature(), ColorHistogramFeature()])
   images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
