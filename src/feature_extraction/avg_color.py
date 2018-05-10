@@ -2,8 +2,8 @@ import os
 import numpy as np
 from PIL import Image
 
-from src.constants import *
-from src.feature_extraction.abstract_fature_extractor import AbstractFeatureExtractor
+from constants import *
+from feature_extraction.abstract_fature_extractor import AbstractFeatureExtractor
 
 
 class AvgColorFeature(AbstractFeatureExtractor):

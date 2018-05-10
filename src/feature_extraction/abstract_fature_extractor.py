@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from typing import List
 from PIL import Image
 
-from src.constants import *
+from constants import *
 
 class AbstractFeatureExtractor():
   """

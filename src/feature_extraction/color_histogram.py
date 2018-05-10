@@ -1,8 +1,8 @@
 from PIL import Image
 import cv2
 
-from src.constants import *
-from src.feature_extraction.abstract_fature_extractor import AbstractFeatureExtractor
+from constants import *
+from feature_extraction.abstract_fature_extractor import AbstractFeatureExtractor
 
 
 class ColorHistogramFeature(AbstractFeatureExtractor):
