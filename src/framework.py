@@ -64,7 +64,7 @@ class Images:
     :return:
     """
     return np.array([np.where(labels == 1)[0] for labels in n_hot])
-
+  
   @property
   def X_train(self):
     return self.train_features[self.train_ids]
@@ -127,28 +127,35 @@ class Images:
     return score
     
   def run_on_test_and_make_kaggle_sub_file(self, classifier = KNeighborsClassifier(3)):
+    image_files = os.listdir(os.path.join(RAW_IMAGES_DIR,'test'))
+    assert len(image_files) >= TOTAL_N['test'], 'Error: Expected to find at least %s image files in %s/test, but only found %s'%(TOTAL_N['test'],RAW_IMAGES_DIR,len(image_files))
+    del image_files
+    
     test_feature_classes = [feature_class.__class__(dataset='test') for feature_class in self.feature_classes]
     test_image_ids = range(1,TOTAL_N['test']+1)
     test_features = self._load_features(test_feature_classes, test_image_ids)
+    
+    X = self.train_features[self.image_ids]
+    y = self.annotations[self.image_ids]
+    
     print('\n')
     start_time = pd.Timestamp.now()
-    classifier.fit(self.X_train, self.y_train)
+    classifier.fit(X, y)
     print('Predicting on training set..')
-    self.y_pred_train = classifier.predict(self.X_train)
-    self.y_pred_train_f1 = f1_score(self.y_train, self.y_pred_train, average='micro')
-    print('Micro F1 Score, train: %s' % self.y_pred_train_f1)
-    print('Predicting on test set..')
-    self.y_pred_test = classifier.predict(test_features[test_image_ids])
+    y_pred_train = classifier.predict(X)
+    y_pred_train_f1 = f1_score(y, y_pred_train, average='micro')
+    print('Micro F1 Score, train: %s' % y_pred_train_f1)
+    print('Making test set predictions..')
+    y_pred_test = classifier.predict(test_features[test_image_ids])
     print('Time taken: %s'%(pd.Timestamp.now() - start_time))
     
     print('Creating submission file in %s..'%SUBMISSION_FILE_DIR)
     if not os.path.exists(SUBMISSION_FILE_DIR):
       os.makedirs(SUBMISSION_FILE_DIR)
-    labels = np.array([np.where(rows == 1)[0] for rows in self.y_pred_test])
+    labels = self.to_label_list(y_pred_test)
     out = np.c_[test_image_ids,labels]
     out = [','.join([str(row[0]), ' '.join(list(map(str,row[1])))]) for row in out]
-    save_time = pd.Timestamp.now()
-    file_name = save_time.strftime('%Y%m%d_%H%M') + '_submission.csv'
+    file_name = pd.Timestamp.now().strftime('%Y%m%d_%H%M') + '_submission.csv'
     with open(os.path.join(SUBMISSION_FILE_DIR,file_name), 'w+') as f:
       f.write('image_id,label_id\n')
       for row in out:
@@ -164,7 +171,7 @@ class Images:
     """
     print('Getting image ids..')
     image_files = os.listdir(os.path.join(RAW_IMAGES_DIR,'train'))
-    assert len(image_files) > n, 'Error: trying to use n=%s when only %s images found in directory %s'%(n,len(image_files),RAW_IMAGES_DIR)
+    assert len(image_files) >= n, 'Error: trying to use n=%s when only %s images found in directory %s'%(n,len(image_files),RAW_IMAGES_DIR)
     np.random.seed(random_state)
     np.random.shuffle(image_files)
     return [int(image_file.split('.')[0]) for image_file in image_files[:n]]
@@ -184,10 +191,3 @@ class Images:
       print('annotations.npz not found in %s, extracting from train.json'%LABEL_DIR)
       extract_annotations()
     return np.load(os.path.join(LABEL_DIR,'annotations.npz'))['arr_0']
-
-
-if __name__ == '__main__':
-  #example execution
-  images = Images(n=9999, features=[AvgColorFeature(), ColorHistogramFeature(),
-                                     GreyScaleImg()])
-  images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
