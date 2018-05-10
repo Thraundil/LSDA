@@ -60,12 +60,10 @@ Source into tensorflow enviroment:
 
 
 ### Todo
-#### Resize and constant into downloader - Frederik
+#### ~~Resize and constant into downloader~~
 #### How does multilabel KNN in sk-learn work?
-#### Feature extraction (using VGG? PCA. Greyscale. Steffen's histograms.)
+#### Feature extraction (using VGG? PCA. ~~Greyscale. Steffen's histograms.~~ HSV.)
 #### Memory handling (h5py, npz)
 #### Kaggle submission format into framework
-#### Graph for performance on each label
+#### ~~Graph for performance on each label~~
 #### Splitting training into subset of smaller training and validation sets
-
-### A small change
