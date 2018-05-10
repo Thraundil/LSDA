@@ -46,7 +46,7 @@ class Images:
     # get list of shuffled image ids
     self.image_ids = self._get_image_ids(self.n, self.random_state)
     # split image ids
-    self.train_ids, self.test_ids = train_test_split(self.image_ids, train_size=self.train_split, random_state=self.random_state)
+    self.train_ids, self.test_ids = train_test_split(range(len(self.image_ids)), train_size=self.train_split, random_state=self.random_state)
     # save length of train and test sets
     self.n_train = len(self.train_ids)
     self.n_test = len(self.test_ids)
@@ -135,8 +135,8 @@ class Images:
     test_image_ids = range(1,TOTAL_N['test']+1)
     test_features = self._load_features(test_feature_classes, test_image_ids)
     
-    X = self.train_features[self.image_ids]
-    y = self.annotations[self.image_ids]
+    X = self.train_features
+    y = self.annotations
     
     print('\n')
     start_time = pd.Timestamp.now()
@@ -190,4 +190,4 @@ class Images:
     if not os.path.isfile(os.path.join(LABEL_DIR,'annotations.npz')):
       print('annotations.npz not found in %s, extracting from train.json'%LABEL_DIR)
       extract_annotations()
-    return np.load(os.path.join(LABEL_DIR,'annotations.npz'))['arr_0']
+    return np.load(os.path.join(LABEL_DIR,'annotations.npz'))['arr_0'][self.image_ids]
