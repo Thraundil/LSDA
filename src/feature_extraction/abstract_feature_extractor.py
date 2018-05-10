@@ -52,7 +52,7 @@ class AbstractFeatureExtractor():
     """
     if not os.path.exists(os.path.join(FEATURES_DIR, self.dataset)):
       os.makedirs(os.path.join(FEATURES_DIR, self.dataset))
-    avg_colors = np.empty((TOTAL_N_TRAIN + 1, self.feature_dim))
+    avg_colors = np.empty((TOTAL_N[self.dataset] + 1, self.feature_dim))
     avg_colors[:] = np.nan
     print('Creating blank file for feature %s as %s..' % (self.prefix, os.path.join(FEATURES_DIR, self.dataset, self.prefix)))
     np.savez_compressed(os.path.join(FEATURES_DIR, self.dataset, self.prefix), avg_colors)
