@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from constants import LABEL_DIR, RAW_IMAGES_DIR, FEATURES_DIR, TOTAL_N_TRAIN
 from feature_extraction.avg_color import AvgColorFeature
 from feature_extraction.color_histogram import ColorHistogramFeature
+from feature_extraction.grey_scale_img import GreyScaleImg
 
 
 def extract_annotations():
@@ -155,5 +156,6 @@ class Images:
 
 if __name__ == '__main__':
   #example execution
-  images = Images(n=11000, features=[AvgColorFeature(), ColorHistogramFeature()])
+  images = Images(n=9999, features=[AvgColorFeature(), ColorHistogramFeature(),
+                                     GreyScaleImg()])
   images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
