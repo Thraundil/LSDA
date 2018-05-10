@@ -1,2 +1,3 @@
 ./data/*
 !./data/labels/*.zip
+*__pycache__*
