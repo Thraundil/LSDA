@@ -61,9 +61,12 @@ Source into tensorflow enviroment:
 
 ### Todo
 #### ~~Resize and constant into downloader~~
-#### How does multilabel KNN in sk-learn work?
+#### How does multilabel KNN in sk-learn work? - Frederik
 #### Feature extraction (using VGG? PCA. ~~Greyscale. Steffen's histograms.~~ HSV.)
 #### Memory handling (h5py, npz)
-#### Kaggle submission format into framework
+#### Do grid-search to determine K-NN. - Frederik
+#### Write report. - Steffen, Frederik
+#### ~~Kaggle submission format into framework~~
 #### ~~Graph for performance on each label~~
 #### Splitting training into subset of smaller training and validation sets
+#### Looking into if the "missing" image has different labels attached to it. If so, remove them from traning set. - Frederik
