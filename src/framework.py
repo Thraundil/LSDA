@@ -101,7 +101,7 @@ class Images:
     print('Time taken: %s'%(pd.Timestamp.now() - start_time))
 
   def _eval_result(self, y_pred, y_true, plot=False):
-    score = f1_score(self.y_train, self.y_pred_train, average='micro')
+    score = f1_score(y_pred, y_true, average='micro')
     print('Micro F1 Score: %s' % score)
 
     if plot:
