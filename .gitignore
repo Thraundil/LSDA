@@ -1,3 +1,6 @@
 ./data/*
 !./data/labels/*.zip
 *__pycache__*
+*.idea
+*.bin
+*.pdf

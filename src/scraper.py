@@ -23,7 +23,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def download_image(fnames_and_urls):
     """
-    download image, preprocess it and save its with 90% quality as JPG format
+    download image, preprocess it and save it with 90% quality as JPG format
     skip image downloading if image already exists at given path
     :param fnames_and_urls: tuple containing absolute path and url of image
     """
@@ -32,19 +32,9 @@ def download_image(fnames_and_urls):
         http = urllib3.PoolManager(retries=Retry(connect=3, read=2, redirect=3))
         response = http.request("GET", url)
         image = Image.open(io.BytesIO(response.data))
-        image = resize(image)
+        image = image.resize(IMAGES_DOWNLOAD_MIN_SIZE, Image.LANCZOS) # makes square images
         image_rgb = image.convert("RGB")
         image_rgb.save(fname, format='JPEG', quality=90)
-
-def resize(img):
-    x, y = img.size
-    min_x, min_y = IMAGES_DOWNLOAD_MIN_SIZE
-    shrinkage_x = min_x / x
-    shrinkage_y = min_y / y
-    shrinkage = max(shrinkage_x, shrinkage_y)
-    img = img.resize((round(x * shrinkage), round(y * shrinkage)), Image.ANTIALIAS)
-    return img
-
 
 def parse_dataset(_dataset, _outdir, _max=10000000):
     """
