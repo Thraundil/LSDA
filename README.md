@@ -1,4 +1,4 @@
-# LSDA
+packages# LSDA
 2018, DIKU - Cph University
 
 # Group 4 (Emil, Frederik, Roberta, Steffen)
@@ -36,11 +36,12 @@ The framework is hopefully an easier way to access and keep track of our data, a
 #### Resize / Crop - Frederik
 
 ### Model
-#### Database / other way to handle information - Roberta
+#### Database / other way to handle information - Roberta + Frederik
 #### KNN model / evaluation - Steffen?
 #### Kaggle submission format
+#### How to modify KNN to do multilabel classification - Frederik
 
-### Azue
+### Azure
 login:
 `lsda`
 `CompetitionGroup4`
@@ -52,3 +53,7 @@ Source into tensorflow enviroment:
 `source lsdaenv/bin/activate`
 
 # !!! DO NOT FORGET TO TURN OFF THE SERVER !!!
+
+### Useful libraries
+#### CV2: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_table_of_contents_imgproc/py_table_of_contents_imgproc.html#py-table-of-content-imgproc
+#### H5PY: http://docs.h5py.org/en/latest/quick.html
