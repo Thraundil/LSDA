@@ -70,3 +70,4 @@ Source into tensorflow enviroment:
 #### ~~Graph for performance on each label~~
 #### Looking into if the "missing" image has different labels attached to it. If so, remove them from traning set. - Frederik
 #### Flash-talk points
+#### Run with larger datasets!
