@@ -55,9 +55,7 @@ class Images:
     self.train_features = self._load_features(self.feature_classes, self.image_ids)
 
     # turn feature matrix into a list of labels
-<<<<<<< HEAD
-    self.labels = np.array([np.where(rows == 1)[0] for rows in self.annotations])
-=======
+
     self.labels = self.to_label_list(self.annotations)
 
   def to_label_list(self, n_hot):
@@ -66,7 +64,6 @@ class Images:
     :return:
     """
     return np.array([np.where(labels == 1)[0] for labels in n_hot])
->>>>>>> 2553dbbf4e1fb4a94a9858ee29f78d877b41d4bd
 
   @property
   def X_train(self):
@@ -186,9 +183,6 @@ class Images:
     if not os.path.isfile(os.path.join(LABEL_DIR,'annotations.npz')):
       print('annotations.npz not found in %s, extracting from train.json'%LABEL_DIR)
       extract_annotations()
-<<<<<<< HEAD
-    return np.load(os.path.join(LABEL_DIR,'annotations.npz'))['arr_0']
-=======
     return np.load(os.path.join(LABEL_DIR,'annotations.npz'))['arr_0']
 
 
@@ -197,4 +191,3 @@ if __name__ == '__main__':
   images = Images(n=9999, features=[AvgColorFeature(), ColorHistogramFeature(),
                                      GreyScaleImg()])
   images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
->>>>>>> 2553dbbf4e1fb4a94a9858ee29f78d877b41d4bd
