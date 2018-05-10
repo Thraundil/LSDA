@@ -146,7 +146,7 @@ class Images:
     y_pred_train_f1 = f1_score(y, y_pred_train, average='micro')
     print('Micro F1 Score, train: %s' % y_pred_train_f1)
     print('Making test set predictions..')
-    y_pred_test = classifier.predict(test_features[test_image_ids])
+    y_pred_test = classifier.predict(test_features)
     print('Time taken: %s'%(pd.Timestamp.now() - start_time))
     
     print('Creating submission file in %s..'%SUBMISSION_FILE_DIR)
