@@ -27,8 +27,8 @@ The framework is hopefully an easier way to access and keep track of our data, a
 #### https://www.kaggle.com/c/imaterialist-challenge-fashion-2018/team
 
 ### Overleaf Links
-#### Repport 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
-#### Repport 1: 
+#### Rapport 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
+#### Rapport 1: 
 
 ### Preprocessing Steps
 #### Average Color - Steffen
@@ -57,3 +57,13 @@ Source into tensorflow enviroment:
 ### Useful libraries
 #### CV2: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_table_of_contents_imgproc/py_table_of_contents_imgproc.html#py-table-of-content-imgproc
 #### H5PY: http://docs.h5py.org/en/latest/quick.html
+
+
+### Todo
+#### Resize and constant into downloader - Frederik
+#### How does multilabel KNN in sk-learn work?
+#### Feature extraction (using VGG? PCA. Greyscale. Steffen's histograms.)
+#### Memory handling (h5py, npz)
+#### Kaggle submission format into framework
+#### Graph for performance on each label
+#### Splitting training into subset of smaller training and validation sets
