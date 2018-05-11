@@ -1,5 +1,5 @@
-./data/*
-!./data/labels/*.zip
+data/*
+!data/labels/*.zip
 *__pycache__*
 *.idea
 *.bin
