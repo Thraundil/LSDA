@@ -87,7 +87,7 @@ def scrape(dataset, outdir, amount=None):
         for _ in pool.imap_unordered(download_image, fnames_urls):
             progress_bar.update(1)
 
-    sys.exit(1)
+    return
 
 def unzip(fname, datadir):
     """
