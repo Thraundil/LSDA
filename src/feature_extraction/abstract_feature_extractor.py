@@ -39,7 +39,7 @@ class AbstractFeatureExtractor():
     returns a Matrix of features for the training set. PRecomputing and saving this matrix is advised.
     :return:
     """
-    print('Loading Average Colors..')
+    print('Loading %s...' % self.prefix)
     if not os.path.isfile(os.path.join(FEATURES_DIR, self.dataset, self.prefix + '.npz')):
       self.create_blank_file()
     avg_colors = self.load_features(img_ids)
@@ -67,8 +67,11 @@ class AbstractFeatureExtractor():
     features = np.load(os.path.join(FEATURES_DIR, self.dataset, self.prefix + '.npz'))['arr_0']
     for image_id in tqdm(image_ids, desc=('Calculating ' + self.prefix + '..')):
       if np.isnan(features[image_id].sum()):
-        img = plt.imread(os.path.join(RAW_IMAGES_DIR, self.dataset, str(image_id) + '.jpg'))
-        features[image_id] = self.calculate_feature(img)
+        try:
+          img = plt.imread(os.path.join(RAW_IMAGES_DIR, self.dataset, str(image_id) + '.jpg'))
+          features[image_id] = self.calculate_feature(img)
+        except:
+          print('WAARNING: cannot open file %s, skipping' % str(os.path.join(RAW_IMAGES_DIR, self.dataset, str(image_id) + '.jpg')))
 
     # save the updated features
     print('\nSaving updated %s to %s..' % (self.prefix, os.path.join(FEATURES_DIR, self.dataset, self.prefix)))

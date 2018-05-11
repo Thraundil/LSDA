@@ -194,6 +194,6 @@ class Images:
     
     
 if __name__ == '__main__':
-    images = Images(n=100000-1, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
+    images = Images(n=1000000, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
     images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
     images.run_on_test_and_make_kaggle_sub_file(classifier = KNeighborsClassifier(3))
