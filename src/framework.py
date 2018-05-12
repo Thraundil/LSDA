@@ -87,7 +87,7 @@ class Images:
       self._annotations = self._load_annotations()
     return self._annotations
   
-  def knn_or_gtfo(self, classifier = KNeighborsClassifier(2)):
+  def knn_or_gtfo(self, classifier=KNeighborsClassifier(2)):
     """
     runs the benchmark
     :param classifier:
@@ -97,10 +97,10 @@ class Images:
     start_time = pd.Timestamp.now()
     classifier.fit(self.X_train, self.y_train)
     print('Predicting on training set..')
-    self.y_pred_train = classifier.predict(self.X_train)
-    self.y_pred_train_f1 = self._eval_result(self.y_pred_train, self.y_train, plot=False)
+    #self.y_pred_train = self._predict(classifier, self.X_train)
+    #self.y_pred_train_f1 = self._eval_result(self.y_pred_train, self.y_train, plot=False)
     print('Predicting on test set..')
-    self.y_pred_test = classifier.predict(self.X_test)
+    self.y_pred_test = self._predict(classifier, self.X_test)
     self.y_pred_test_f1 = self._eval_result(self.y_test, self.y_pred_test, plot=True)
     print('Time taken: %s'%(pd.Timestamp.now() - start_time))
 
@@ -142,7 +142,7 @@ class Images:
     start_time = pd.Timestamp.now()
     classifier.fit(X, y)
     print('Predicting on training set..')
-    y_pred_train = classifier.predict(X)
+    y_pred_train = self._predict(classifier, self.X_test)
     y_pred_train_f1 = f1_score(y, y_pred_train, average='micro')
     print('Micro F1 Score, train: %s' % y_pred_train_f1)
     print('Making test set predictions..')
@@ -161,6 +161,24 @@ class Images:
       for row in out:
         f.write(row+'\n')
     print('File Saved')
+
+  def _predict(self, classifier, X):
+    """
+    performs predictions on the classifier in batches, gives progress bar
+    :param classifier:
+    :param X:
+    :return:
+    """
+    N, _ = X.shape
+    _, c = classifier.predict(X[:1]).shape
+    y_pred = np.zeros([N, c])
+    batch_size = 100
+    batch_count = int(N / batch_size)
+    for i in tqdm(range(0, batch_count), desc=('predicting')):
+      y_pred[i*batch_size:(i+1)*batch_size] = classifier.predict(X[i*batch_size:(i+1)*batch_size])
+
+    return y_pred
+
     
   def _get_image_ids(self, n, random_state):
     """
@@ -194,6 +212,6 @@ class Images:
     
     
 if __name__ == '__main__':
-    images = Images(n=1000000, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
-    images.knn_or_gtfo(classifier = KNeighborsClassifier(3))
-    images.run_on_test_and_make_kaggle_sub_file(classifier = KNeighborsClassifier(3))
+    images = Images(n=1000000, train_split=0.98, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
+    images.knn_or_gtfo(classifier = KNeighborsClassifier(30))
+    images.run_on_test_and_make_kaggle_sub_file(classifier = KNeighborsClassifier(30))
