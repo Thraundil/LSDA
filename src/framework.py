@@ -7,6 +7,7 @@ from tqdm import tqdm
 from sklearn.metrics import f1_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 from matplotlib import pyplot as plt
 
 from constants import LABEL_DIR, RAW_IMAGES_DIR, FEATURES_DIR, TOTAL_N, SUBMISSION_FILE_DIR
@@ -125,8 +126,41 @@ class Images:
       plt.savefig('../f1_per_feature.pdf')
 
     return score
+
+  def gridSearch_optimize_hyperparams(self):
+    """
+    finds best K for K-NN using gridsearch (stratified) CV on 
+    the full training set, refits with the best K (without CV) and defines 
+    the best K-NN as self.clf
+    :return:
+    """
+    # Set the parameters by cross-validation
+    print('\n')
+    start_time = pd.Timestamp.now()
+    hyper_params = [{'n_neighbors': np.concatenate(([1,2],np.arange(3,33,3)))}]
+    print('Tuning hyper-parameter(s) and fitting using the best one(s)..')
+    clf = GridSearchCV(KNeighborsClassifier(), hyper_params, cv=3,
+                       scoring= 'f1_micro')
     
-  def run_on_test_and_make_kaggle_sub_file(self, classifier = KNeighborsClassifier(3)):
+    X = self.train_features
+    y = self.annotations
+    clf.fit(X, y)
+    self.clf = clf
+    
+    print('\n')
+    print("Grid scores on training set:")
+    print('\n')
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+        print("%0.3f (+/-%0.03f) for %r"
+              % (mean, std * 2, params))
+
+    print('\n')
+    print('Best K found through CV on training set: %s' %clf.best_params_)
+    print('Time taken: %s'%(pd.Timestamp.now() - start_time))
+    
+  def run_on_test_and_make_kaggle_sub_file(self):
     image_files = os.listdir(os.path.join(RAW_IMAGES_DIR,'test'))
     assert len(image_files) >= TOTAL_N['test'], 'Error: Expected to find at least %s image files in %s/test, but only found %s'%(TOTAL_N['test'],RAW_IMAGES_DIR,len(image_files))
     del image_files
@@ -138,13 +172,19 @@ class Images:
     X = self.train_features
     y = self.annotations
     
+    classifier = KNeighborsClassifier(3)
+    
+    if withGridsearch:
+        classifier = self.clf
+    
     print('\n')
     start_time = pd.Timestamp.now()
-    classifier.fit(X, y)
+    if not withGridsearch:
+        classifier.fit(X, y)
     print('Predicting on training set..')
-    #y_pred_train = self._predict(classifier, X)
-    #y_pred_train_f1 = f1_score(y, y_pred_train, average='micro')
-    #print('Micro F1 Score, train: %s' % y_pred_train_f1)
+    y_pred_train = self._predict(classifier, X)
+    y_pred_train_f1 = f1_score(y, y_pred_train, average='micro')
+    print('Micro F1 Score, train: %s' % y_pred_train_f1)
     print('Making test set predictions..')
     y_pred_test = self._predict(classifier, test_features)
     print('Time taken: %s'%(pd.Timestamp.now() - start_time))
@@ -212,6 +252,10 @@ class Images:
     
     
 if __name__ == '__main__':
-    images = Images(n=1000000, train_split=0.98, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
-    images.knn_or_gtfo(classifier = KNeighborsClassifier(30))
-    images.run_on_test_and_make_kaggle_sub_file(classifier = KNeighborsClassifier(30))
+    withGridsearch = False
+    
+    images = Images(n=100000, train_split=0.98, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
+    # images.knn_or_gtfo(classifier = KNeighborsClassifier(30)) # comment out this line to only predict on full training and test set
+    if withGridsearch:
+        images.gridSearch_optimize_hyperparams()
+    images.run_on_test_and_make_kaggle_sub_file()
