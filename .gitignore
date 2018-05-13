@@ -1,4 +1,5 @@
 data/*
+playground/imageSize.py
 !data/labels/*.zip
 *__pycache__*
 *.idea
