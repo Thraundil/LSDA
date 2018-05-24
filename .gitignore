@@ -1,8 +1,9 @@
-KNN/data/*
-!KNN/data/labels/*.zip
-CNN/data/*
-!CNN/data/labels/*.zip
+KNN/data/raw_images/
+KNN/data/labels/*.json
+CNN/data/raw_images/
+CNN/data/labels/*.json
 *__pycache__*
 *.idea
 *.bin
 *.pdf
+*.json
