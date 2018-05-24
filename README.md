@@ -62,11 +62,11 @@ Source into tensorflow enviroment:
 
 
 ## Stuff
-#### Should the "missing"-images be deleted?
-#### Should (and can) we do the augmentation beforehand, i.e., not on the fly?
-#### Initializer (https://keras.io/initializers/): Use either Glorot (http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf, http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization) or He (https://arxiv.org/pdf/1502.01852.pdf), preferably uniform (https://github.com/keras-team/keras/issues/52). 
-#### Check if our pre-trained net uses ranges [0;255] or [0;1].
-#### Find a way to implement real-time (or almost) feedback during training. 
-#### Use batch normalization (prior to act.func.!) to combat vanishing gradients (https://towardsdatascience.com/how-to-use-batch-normalization-with-tensorflow-and-tf-keras-to-train-deep-neural-networks-faster-60ba4d054b73)? 
-#### Using a pre-trained model tutorial: https://www.learnopencv.com/keras-tutorial-fine-tuning-using-pre-trained-models/.
-#### Remember to use the Keras function preprocess_input().
+* Should the "missing"-images be deleted?
+* Should (and can) we do the augmentation beforehand, i.e., not on the fly?
+* Initializer (https://keras.io/initializers/): Use either Glorot (http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf, http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization) or He (https://arxiv.org/pdf/1502.01852.pdf), preferably uniform (https://github.com/keras-team/keras/issues/52). 
+* Check if our pre-trained net uses ranges [0;255] or [0;1].
+* Find a way to implement real-time (or almost) feedback during training. 
+* Should we use batch normalization (prior to act.func.!) to combat vanishing gradients in the on-top NN (https://stackoverflow.com/questions/34716454/where-do-i-call-the-batchnormalization-function-in-keras#37979391, https://towardsdatascience.com/how-to-use-batch-normalization-with-tensorflow-and-tf-keras-to-train-deep-neural-networks-faster-60ba4d054b73)? 
+* Using a pre-trained model tutorial: https://www.learnopencv.com/keras-tutorial-fine-tuning-using-pre-trained-models/.
+* Remember to use the Keras function preprocess_input().
