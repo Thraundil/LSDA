@@ -64,7 +64,7 @@ Source into tensorflow enviroment:
 ## Stuff
 * Should the "missing"-images be deleted?
 * Should (and can) we do the augmentation beforehand, i.e., not on the fly?
-* Initializer for the on-top NN (https://keras.io/initializers/): Use either Glorot (http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf, http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization) or He (https://arxiv.org/pdf/1502.01852.pdf), preferably uniform (https://github.com/keras-team/keras/issues/52). 
+* Initializer for the on-top NN (https://keras.io/initializers/): Use either Glorot (http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf, http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization) or He (https://arxiv.org/pdf/1502.01852.pdf), preferably uniform (https://github.com/keras-team/keras/issues/52). (Use He! Remember to avoid dead neurons in the first layer).
 * Check if our pre-trained net uses ranges [0;255] or [0;1].
 * Find a way to implement real-time (or almost) feedback during training. 
 * Using a pre-trained model tutorials: https://keras.io/applications/, https://www.learnopencv.com/keras-tutorial-fine-tuning-using-pre-trained-models/.
