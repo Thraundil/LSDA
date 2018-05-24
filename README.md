@@ -6,7 +6,7 @@ packages# LSDA
 # NOTES
 
 ### Downloading the data
-Data can be downloaded with the scraper. To download all data (expected time: 4h, expected size: 100GB):  
+Data can be downloaded with the scraper. To download all data (expected time: 4h, expected size: 25GB (with resizing):  
 `$ cd src`  
 `$ python scraper.py`  
   
@@ -27,19 +27,8 @@ The framework is hopefully an easier way to access and keep track of our data, a
 #### https://www.kaggle.com/c/imaterialist-challenge-fashion-2018/team
 
 ### Overleaf Links
-#### Rapport 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
-#### Rapport 1: 
-
-### Preprocessing Steps
-#### Average Color - Steffen
-#### small grayscale images  - Emil
-#### Resize / Crop - Frederik
-
-### Model
-#### Database / other way to handle information - Roberta + Frederik
-#### KNN model / evaluation - Steffen?
-#### Kaggle submission format
-#### How to modify KNN to do multilabel classification - Frederik
+#### Report 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
+#### Report 1: 
 
 ### Azure
 login:
@@ -59,15 +48,12 @@ Source into tensorflow enviroment:
 #### H5PY: http://docs.h5py.org/en/latest/quick.html
 
 
-### Todo
-#### ~~Resize and constant into downloader~~
-#### How does multilabel KNN in sk-learn work? - Emil
-#### ~~Feature extraction (Greyscale. Steffen's histograms.)~~
-#### Memory handling (h5py, npz)
-#### Do grid-search to determine K-NN. - Frederik
-#### Write report. - Steffen, Frederik (data)
-#### ~~Kaggle submission format into framework~~
-#### ~~Graph for performance on each label~~
-#### Looking into if the "missing" image has different labels attached to it. If so, remove them from traning set. - Frederik
-#### Flash-talk points
-#### Run with larger datasets!
+## Todo:
+### Data preparation
+#### Implement resizing in scraper to 299x299 instead
+#### Save images as HDF5 files and load into Keras
+#### Data augmentation: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and use this for extending rare classes
+
+### Model
+#### Use Inception-v3 as template. Can v4 be used in Keras?
+#### Fine-tune the model. For this, we need to read up on the Inception-v3 architechture.
