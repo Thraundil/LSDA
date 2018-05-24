@@ -67,5 +67,5 @@ Source into tensorflow enviroment:
 * Initializer for the on-top NN (https://keras.io/initializers/): Use either Glorot (http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf, http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization) or He (https://arxiv.org/pdf/1502.01852.pdf), preferably uniform (https://github.com/keras-team/keras/issues/52). 
 * Check if our pre-trained net uses ranges [0;255] or [0;1].
 * Find a way to implement real-time (or almost) feedback during training. 
-* Using a pre-trained model tutorial: https://www.learnopencv.com/keras-tutorial-fine-tuning-using-pre-trained-models/.
+* Using a pre-trained model tutorials: https://keras.io/applications/, https://www.learnopencv.com/keras-tutorial-fine-tuning-using-pre-trained-models/.
 * Remember to use the Keras function preprocess_input().
