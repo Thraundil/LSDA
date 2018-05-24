@@ -14,6 +14,8 @@ packages# LSDA
 #### Augment data on the fly: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and use this for extending rare classes
 #### validate and create tensorboard graphs of accuracy
 #### perform test predictions
+#### extract and save pretrained inception features, then run own top layer on these features
+#### implement tensorflow micro f1 score function as metric
 
 # NOTES
 
