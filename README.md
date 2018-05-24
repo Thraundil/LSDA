@@ -16,6 +16,8 @@ packages# LSDA
 #### Perform test predictions
 #### Implement tensorflow micro f1 score function as metric
 
+#### (Should the "missing"-images be deleted?)
+
 # NOTES
 
 ### Downloading the data
