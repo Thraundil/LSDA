@@ -5,16 +5,16 @@ packages# LSDA
 
 
 ### Data saving and loading
-#### Download images, ~~resize to 299x299 (done in scraper)~~ and save as HDF5 files
-#### Figure out how to load HDF5 data into keras
+* Download images, ~~resize to 299x299 (done in scraper)~~ and save as HDF5 files
+* Figure out how to load HDF5 data into keras
 
 ### Model
-#### Use Inception-v3 as template.
-#### Training: Train dense layers first (save features outputtet by the conv-part, and train the dense layers only on that), then the whole architecture. Possibly implement boosting to extend rare classes. 
-#### Augment data on the fly: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and possibly use this for extending rare classes
-#### Validate and create tensorboard graphs of accuracy
-#### Perform test predictions
-#### Implement tensorflow micro f1 score function as metric
+* Use Inception-v3 as template.
+* Training: Train dense layers first (save features outputtet by the conv-part, and train the dense layers only on that), then the whole architecture. Possibly implement boosting to extend rare classes. 
+* Augment data on the fly: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and possibly use this for extending rare classes
+* Validate and create tensorboard graphs of accuracy
+* Perform test predictions
+* Implement tensorflow micro f1 score function as metric
 
 # NOTES
 
@@ -34,14 +34,14 @@ The framework is hopefully an easier way to access and keep track of our data, a
 
 
 ### Kaggle Link:
-#### https://www.kaggle.com/c/imaterialist-challenge-fashion-2018
+https://www.kaggle.com/c/imaterialist-challenge-fashion-2018
 
 ### Team Name: K-NN or GTFO
-#### https://www.kaggle.com/c/imaterialist-challenge-fashion-2018/team
+https://www.kaggle.com/c/imaterialist-challenge-fashion-2018/team
 
 ### Overleaf Links
-#### Report 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
-#### Report 1: 
+Report 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
+Report 1: 
 
 ### Azure
 login:
@@ -57,8 +57,8 @@ Source into tensorflow enviroment:
 # !!! DO NOT FORGET TO TURN OFF THE SERVER !!!
 
 ### Useful libraries
-#### CV2: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_table_of_contents_imgproc/py_table_of_contents_imgproc.html#py-table-of-content-imgproc
-#### H5PY: http://docs.h5py.org/en/latest/quick.html
+* CV2: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_table_of_contents_imgproc/py_table_of_contents_imgproc.html#py-table-of-content-imgproc
+* H5PY: http://docs.h5py.org/en/latest/quick.html
 
 
 ## Stuff
