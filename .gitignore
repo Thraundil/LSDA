@@ -1,6 +1,7 @@
-data/*
-playground/imageSize.py
-!data/labels/*.zip
+KNN/data/*
+!KNN/data/labels/*.zip
+CNN/data/*
+!CNN/data/labels/*.zip
 *__pycache__*
 *.idea
 *.bin
