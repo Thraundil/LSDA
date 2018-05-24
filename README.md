@@ -4,20 +4,14 @@ packages# LSDA
 # Group 4 (Emil, Frederik, Roberta, Steffen)
 
 
-## Todo:
-### Data preparation
-#### Implement resizing in scraper to 299x299x3 instead
-#### Save images as HDF5 files and load into Keras
-#### Data augmentation: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and use this for extending rare classes
-
 ### Data loading
-#### download images, resize to 299x299 and save in h5 format
+#### download images, ~~resize to 299x299~~ and save in h5 format
 
 ### Model
 #### Use Inception-v3 as template.
-#### Fine-tune the model. For this, we need to read up on the Inception-v3 architechture.
-#### load h5 data
-#### augment data on the fly
+#### Fine-tune the model: Train dense layers first (save features spat out by the conv-part and save them, and train the dense layers only on that), then the whole architecture. 
+#### Load h5 data
+#### Augment data on the fly: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and use this for extending rare classes
 #### validate and create tensorboard graphs of accuracy
 #### perform test predictions
 
