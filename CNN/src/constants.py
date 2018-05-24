@@ -12,7 +12,7 @@ FEATURES_DIR = '../data/features'
 SUBMISSION_FILE_DIR = '../data/submissions'
 
 # minimum size of the images after download
-IMAGES_DOWNLOAD_MIN_SIZE = (256, 256)
+IMAGES_DOWNLOAD_MIN_SIZE = (299, 299)
 
 # total number of images in each dataset
 TOTAL_N = {'train':1014544,'validation':9897,'test':39706}
