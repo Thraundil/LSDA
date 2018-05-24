@@ -4,23 +4,22 @@ packages# LSDA
 # Group 4 (Emil, Frederik, Roberta, Steffen)
 
 
-### Data loading
-#### download images, ~~resize to 299x299~~ and save in h5 format
+### Data saving and loading
+#### Download images, ~~resize to 299x299 (done in scraper)~~ and save as HDF5 files
+#### Figure out how to load HDF5 data into keras
 
 ### Model
 #### Use Inception-v3 as template.
-#### Fine-tune the model: Train dense layers first (save features spat out by the conv-part and save them, and train the dense layers only on that), then the whole architecture. 
-#### Load h5 data
-#### Augment data on the fly: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and use this for extending rare classes
-#### validate and create tensorboard graphs of accuracy
-#### perform test predictions
-#### extract and save pretrained inception features, then run own top layer on these features
-#### implement tensorflow micro f1 score function as metric
+#### Training: Train dense layers first (save features outputtet by the conv-part, and train the dense layers only on that), then the whole architecture. Possibly implement boosting to extend rare classes. 
+#### Augment data on the fly: Follow Jupyter Notebook (CNNs_In_Practice_Data_Augmentation.ipynb) and possibly use this for extending rare classes
+#### Validate and create tensorboard graphs of accuracy
+#### Perform test predictions
+#### Implement tensorflow micro f1 score function as metric
 
 # NOTES
 
 ### Downloading the data
-Data can be downloaded with the scraper. To download all data (expected time: 4h, expected size: 25GB (with resizing):  
+Data can be downloaded with the scraper. To download all data (expected size: 25GB (with resizing)):  
 `$ cd src`  
 `$ python scraper.py`  
   
