@@ -40,8 +40,8 @@ https://www.kaggle.com/c/imaterialist-challenge-fashion-2018
 https://www.kaggle.com/c/imaterialist-challenge-fashion-2018/team
 
 ### Overleaf Links
-Report 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
-Report 1: 
+* Report 0: https://www.overleaf.com/15811080jqgcpbxscxdj#/60201263/
+* Report 1: 
 
 ### Azure
 login:
