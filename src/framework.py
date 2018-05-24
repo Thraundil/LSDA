@@ -254,7 +254,7 @@ class Images:
 if __name__ == '__main__':
     withGridsearch = False
     
-    images = Images(n=100000, train_split=0.98, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
+    images = Images(n=10000, train_split=0.98, feature_classes=[AvgColorFeature(), ColorHistogramFeature(), GreyScaleImg()])
     # images.knn_or_gtfo(classifier = KNeighborsClassifier(30)) # comment out this line to only predict on full training and test set
     if withGridsearch:
         images.gridSearch_optimize_hyperparams()
