@@ -15,7 +15,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 verbose = True
 
-#===============================================================================
+# %%============================================================================
 # IMPORT DATA
 #===============================================================================
 img_size = 299 # each RGB image has shape (img_size, img_size, 3) with values in (0;255)
@@ -45,7 +45,7 @@ if verbose:
     print('x_train shape: ', x_train.shape)
     print('y_train shape: ', y_train.shape)
 
-#===============================================================================
+# %%============================================================================
 # BUILD TOP LAYER
 #===============================================================================
 # Load files
@@ -58,34 +58,35 @@ if verbose:
 CNN_features = np.random.rand(no_imgs_batch,2048) # test construction
 # train_data = np.load(open('bottleneck_features_train.npy'))
 if verbose:
-    print('CNN_features shape: ', CNN_features.shape)
+    print('CNN_features shape: ', CNN_features.shape, '\n')
 
 # validation_data = ...
 # validation_labels = ...
 
 model_top_layer = Sequential()
 # model_top_layer.add(Flatten(input_shape=(1,2048))) # the comma in (2048,) is important!
-model_top_layer.add(Dense(1024, activation='relu', input_shape=(2048,)))
+model_top_layer.add(Dense(1024, activation='relu', input_shape=(2048,), name='dense_1'))
 model_top_layer.add(Dropout(0.5))
 model_top_layer.add(Dense(no_labels,
                 kernel_initializer='he_uniform',
-                activation='sigmoid'))
+                activation='sigmoid',
+                name='dense_2'))
 model_top_layer.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
+# %%============================================================================
+# TRAIN TOP LAYER
+#===============================================================================
 if verbose:
     print('Training top layer..')
 
-#===============================================================================
-# TRAIN TOP LAYER
-#===============================================================================
 model_top_layer.fit(CNN_features, y_train,
-          epochs=50,
+          epochs=2,
           batch_size=32) # , validation_data=(validation_data, validation_labels)
 # model_top_layer.save_weights('top_layer.h5')
 
-#===============================================================================
+# %%============================================================================
 # BUILD FULL MODEL
 #===============================================================================
 model_full = Sequential()
@@ -107,6 +108,7 @@ for layer in incep_model.layers[last_frozen_layer:]:
 
 model_full.add(incep_model)
 model_full.add(AveragePooling2D(pool_size=(8,8)))
+model_full.add(Flatten())
 # model_top_layer.load_weights('model_top_layer_weights_path')
 model_full.add(model_top_layer)
 
@@ -114,16 +116,34 @@ model_full.compile(optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-# NOTE: Begin debugging here!
-# if verbose:
-    #print('layer names: ', model.layers)
-    # print('flatten_1 input_shape: ', model_top_layer.get_layer('flatten_1').input_shape)
-    # print('flatten_1 output_shape: ', model_top_layer.get_layer('flatten_1').output_shape)
+if verbose:
+    for i,chunk in enumerate(model_full.layers):
+        if i == 0: # unpack CNN
+            print('CNN layers:')
+            print('First CNN layer input shape: ', chunk.layers[0].input_shape)
+            print('Last CNN layer output shape: ', chunk.layers[-1].output_shape, '\n')
+        if i == 1: # Flatten layer
+            print('Flatten layer:')
+            print('Flatten layer input shape: ', chunk.input_shape)
+            print('Flatten layer output shape: ', chunk.output_shape, '\n')
+        if i == 2: # AveragePooling2D
+            print('Average pooling layer:')
+            print('AvPool layer input shape: ', chunk.input_shape)
+            print('AvPool layer output shape: ', chunk.output_shape, '\n')
+        if i == 3: # unpack top_layer
+            print('Top layers:')
+            print('First top_layer layer input shape: ', chunk.layers[0].input_shape)
+            print('Last top_layer layer output shape: ', chunk.layers[-1].output_shape, '\n')
+            # for j,layer in enumerate(chunk.layers):
+            #     print(f'Layer {j} input shape: ', layer.input_shape)
+            #     print(f'Layer {j} output shape: ', layer.output_shape)
 
-
-#===============================================================================
+# %%============================================================================
 # FINE-TUNE FULL MODEL
 #===============================================================================
+if verbose:
+    print('Fine-tuning full model..', '\n')
+
 # Structure data with datagenerator (with augmentation)
 datagen = ImageDataGenerator(rotation_range=10,
                              width_shift_range=0.15,
@@ -131,6 +151,4 @@ datagen = ImageDataGenerator(rotation_range=10,
                              zoom_range=0.15,
                              horizontal_flip=True)
 
-model_full.fit_generator(datagen.flow(x_train, y_train, batch_size=32),
-                    steps_per_epoch=no_imgs_batch/32, epochs=2,
-                    samples_per_epoch = no_imgs_batch)
+model_full.fit_generator(datagen.flow(x_train, y_train, batch_size=23), epochs=2) # steps_per_epoch=no_imgs_batch/32, samples_per_epoch = no_imgs_batch
