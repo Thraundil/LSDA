@@ -69,8 +69,8 @@ Source into tensorflow enviroment:
 * Find a way to implement real-time (or almost) feedback during training. 
 * Using a pre-trained model tutorials: https://keras.io/applications/, https://www.learnopencv.com/keras-tutorial-fine-tuning-using-pre-trained-models/.
 * Remember to use the Keras function preprocess_input().
-### Notes for Sunday (the day we prove that God herself is more lazy than us!):
+### Notes for Sunday:
 * Setup framework for loading batches (of 1k or 10k images) - can new batch be loaded while training on previous one?
 * Make sure that images and labels match 
-* Setup pipeline for training top layer on features and save it
-* Setup fine-tuning (with augmentation and boosting!)
+* Figure out how to load only batches of CNN_features into memory
+* Boosting?
