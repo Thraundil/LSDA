@@ -73,4 +73,4 @@ Source into tensorflow enviroment:
 * Setup framework for loading batches (of 1k or 10k images) - can new batch be loaded while training on previous one?
 * Make sure that images and labels match 
 * Figure out how to load only batches of CNN_features into memory
-* Boosting?
+* Boosting? Not really possible: https://stackoverflow.com/questions/39063676/how-to-boost-a-keras-based-neural-network-using-adaboost
