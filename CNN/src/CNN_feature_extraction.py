@@ -39,17 +39,20 @@ MODEL.add(InceptionV3(weights="imagenet", include_top=False))
 MODEL.add(AveragePooling2D(pool_size=(8,8), strides=None, padding='valid', data_format=None))
 
 
-# In[ ]:
+# In[1]:
 
 
 def load_images(raw_images_dir, start, end):
     images = np.zeros((end - start, 299, 299, 3))
     for i in range(start, end):
-        image = load_img(os.path.join(raw_images_dir, "{}.jpg".format(i)) , target_size= (299, 299))
-        image = img_to_array(image)
-        image = np.expand_dims(image, axis=0)
-        image = preprocess_input(image)
-        images[i- start] = image[0]
+        try:
+            image = load_img(os.path.join(raw_images_dir, "{}.jpg".format(i)) , target_size= (299, 299))
+            image = img_to_array(image)
+            image = np.expand_dims(image, axis=0)
+            image = preprocess_input(image)
+            images[i- start] = image[0]
+        except:
+            print('WARNING: failed to access image %i' % i)
     return images
         
 
