@@ -2,6 +2,7 @@ KNN/data/raw_images/
 KNN/data/labels/*.json
 CNN/data/raw_images/
 CNN/data/labels/*.json
+CNN/src/Tensorboard/
 *__pycache__*
 *.idea
 *.bin
