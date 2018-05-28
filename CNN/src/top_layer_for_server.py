@@ -5,6 +5,7 @@ import time
 import h5py
 from tqdm import tqdm
 
+from tensorflow.app import flags
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 
 from keras import backend as K
@@ -26,6 +27,11 @@ verbose = True
 # %%============================================================================
 # HYPERPARAMETERS
 #===============================================================================
+# Flags
+FLAGS = flags.FLAGS
+flags.DEFINE_float('test', 0.1, 'just a test')
+print(FLAGS.test)
+
 lr_Adam = 0.001
 beta_1_Adam = 0.9
 beta_2_Adam = 0.999
