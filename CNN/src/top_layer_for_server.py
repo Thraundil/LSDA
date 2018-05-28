@@ -5,7 +5,7 @@ import time
 import h5py
 from tqdm import tqdm
 
-from tensorflow.app import flags
+import tensorflow as tf
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 
 from keras import backend as K
@@ -28,6 +28,7 @@ verbose = True
 # HYPERPARAMETERS
 #===============================================================================
 # Flags
+flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_float('test', 0.1, 'just a test')
 print(FLAGS.test)
