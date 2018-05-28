@@ -8,6 +8,8 @@ from tqdm import tqdm
 
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 
+import tensorflow as tf
+
 from keras import backend as K
 from keras import optimizers
 from keras.models import Sequential
