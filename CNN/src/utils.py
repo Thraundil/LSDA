@@ -54,55 +54,6 @@ def f1(y_true, y_pred):
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 
-# class Metrics(Callback):
-#     def __init__(self):
-#         super().__init__()
-#         self.best_val_score_file = 'best_val_score.npz'
-#         self.best_val_score = self.load_best_val_score()
-#
-#     def load_best_val_score(self):
-#         if os.path.isfile(self.best_val_score_file):
-#             return np.load('best_val_score.npz')[0]
-#         else:
-#             return 0
-#
-#     def on_train_begin(self, logs={}):
-#         self.val_f1s = []
-#         self.val_recalls = []
-#         self.val_precisions = []
-#
-#     def on_epoch_end(self, epoch, logs={}):
-#         val_predict = (np.asarray(self.model.predict(validation_features))).round()
-#         val_targ = validation_labels
-#         _val_f1 = f1_score(val_targ, val_predict, average='micro')
-#         _val_recall = recall_score(val_targ, val_predict, average='micro')
-#         _val_precision = precision_score(val_targ, val_predict, average='micro')
-#         self.val_f1s.append(_val_f1)
-#         self.val_recalls.append(_val_recall)
-#         self.val_precisions.append(_val_precision)
-#         print(' — val_f1: %f — val_precision: %f — val_recall %f' %(_val_f1, _val_precision, _val_recall))
-#         if _val_f1 > self.best_val_score:
-#             print('Better model found, saving model with val score %s'%_val_f1)
-#             self.model.save('best_full_model.h5')
-#             self.best_val_score = _val_f1
-#             # Save model
-#             # Convert model to JSON and save
-#             model_top_layer_json = model_top_layer.to_json()
-#             with open('model_top_layer.json', 'w') as json_file:
-#                 json_file.write(model_top_layer_json)
-#             # Save weights
-#             model_top_layer.save_weights('weights_top_layer.h5')
-#             np.savez_compressed(self.best_val_score_file, np.array([_val_f1]))
-#             print('Saved model as json and weights as h5..')
-#         return
-#
-#
-# class Save_model(Callback):
-#     def on_epoch_end(self, epoch, logs={}):
-#         self.model.save('full_model.h5')
-#         return
-
-
 class TrainValTensorBoard(TensorBoard):
     """
     improved tensoroard logging, including validation set performance

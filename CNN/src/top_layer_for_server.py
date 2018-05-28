@@ -43,7 +43,6 @@ no_labels = 229 # NOTE: This is terrible!
 # %%============================================================================
 # IMPORT DATA FOR TRAINING TOP LAYER
 #===============================================================================
-
 # Load CNN features and corresponding labels NOTE: Labels are now of size 229 instead of 228!
 os.chdir('/mnt/LSDA/CNN/src')
 FEATURES_FOLDER = '/home/lsda/features'
@@ -101,7 +100,7 @@ if verbose:
     print('Training top layer..')
 
 # Callbacks
-tbCallBack = TrainValTensorBoard(log_dir='./Tensorboard/',
+tbCallBack = TrainValTensorBoard(log_dir='./Tensorboard/top_layer/',
                                  histogram_freq=0,
                                  write_graph=True,
                                  write_images=True)

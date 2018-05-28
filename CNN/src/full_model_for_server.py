@@ -34,19 +34,8 @@ batch_size = 500 # batch size given to fit function
 epochs = 2
 
 # %%============================================================================
-# IMPORT DATA FOR FINE-TUNING FULL MODEL
+# IMPORT VALIDATION DATA
 #===============================================================================
-# x_train (features)
-train_dir = '../data/raw_images/train/'
-image_files = os.listdir(train_dir)
-image_files = np.random.permutation(image_files)
-no_imgs_tot = len(image_files)
-img_size = 299 # each RGB image has shape (img_size, img_size, 3) with values in (0;255)
-
-# y_train (labels)
-annotations_dir = '../data/labels/train/labels.npz'
-train_labels = np.load(annotations_dir)['arr_0']
-
 #Load subset of validation data to check on
 N_VALID = 1000
 
@@ -69,7 +58,7 @@ for i,image_file in enumerate(val_image_files):
 if verbose:
     print('x_val shape: ', x_val.shape)
     print('y_val shape: ', y_val.shape)
-    
+
 # %%============================================================================
 # BUILD FULL MODEL
 #===============================================================================
@@ -140,12 +129,46 @@ model_full.compile(optimizer=SGD_full,
 #     # plot_model(model_full, to_file='full_model.png', show_shapes=True) # spits out a flow-chart of the model
 
 # %%============================================================================
-# FINE-TUNE FULL MODEL
+# FINE-TUNE FULL MODEL IN BATCHES OF LOADED DATA
 #===============================================================================
 if verbose:
     print('Fine-tuning full model..')
 
+#$$$$$$$$$$$$$$$$$$$$$ Arguments passed to fit_generator $$$$$$$$$$$$$$$$$$$$$$$
+# Structure data with datagenerator (with augmentation)
+datagen = ImageDataGenerator(rotation_range=10,
+                             width_shift_range=0.15,
+                             height_shift_range=0.15,
+                             zoom_range=0.15,
+                             horizontal_flip=True)
+
+# Callbacks
+tbCallBack = TrainValTensorBoard(log_dir='./Tensorboard/full_model/',
+                                 histogram_freq=0,
+                                 write_graph=True,
+                                 write_images=True)
+# Checkpoint
+filepath = 'best_model_and_weights_full_model.h5'
+checkpoint = ModelCheckpoint(filepath,
+                             monitor='val_f1',
+                             verbose=1,
+                             save_best_only=True,
+                             mode='max')
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$ Prepare to load data $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# x_train (features)
+train_dir = '../data/raw_images/train/'
+image_files = os.listdir(train_dir)
+image_files = np.random.permutation(image_files)
+no_imgs_tot = len(image_files)
+img_size = 299 # each RGB image has shape (img_size, img_size, 3) with values in (0;255)
+
+# y_train (labels)
+annotations_dir = '../data/labels/train/labels.npz'
+train_labels = np.load(annotations_dir)['arr_0']
+
 for iteration in range(int(no_imgs_tot/no_imgs_batch+1)):
+    # Load data
     print('Iteration: %s'%iteration)
     subset = image_files[(iteration*no_imgs_batch):((iteration+1)*no_imgs_batch)]
     indices = [int(image_file.split('.')[0]) for image_file in subset]
@@ -163,30 +186,7 @@ for iteration in range(int(no_imgs_tot/no_imgs_batch+1)):
     # Load and store labels (y_train)
     y_train = train_labels[indices] # full annotations matrix is padded with one zero row and column, and has shape (no_imgs_tot+1,no_labels+1)
 
-    if verbose:
-        print('x_train shape: ', x_train.shape)
-        print('y_train shape: ', y_train.shape)
-    # Structure data with datagenerator (with augmentation)
-    datagen = ImageDataGenerator(rotation_range=10,
-                                 width_shift_range=0.15,
-                                 height_shift_range=0.15,
-                                 zoom_range=0.15,
-                                 horizontal_flip=True)
-
-    # Callbacks
-    tbCallBack = TrainValTensorBoard(log_dir='./Tensorboard/',
-                                     histogram_freq=0,
-                                     write_graph=True,
-                                     write_images=True)
-    
-    # Checkpoint
-    filepath = 'best_model_and_weights_full_model.h5'
-    checkpoint = ModelCheckpoint(filepath,
-                                 monitor='val_f1',
-                                 verbose=1,
-                                 save_best_only=True,
-                                 mode='max')
-
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Perform the fit $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     model_full.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
                              epochs=epochs,
                              callbacks=[checkpoint, tbCallBack],
