@@ -31,7 +31,7 @@ lr_SGD = 1e-4 # suggested very low lr
 momentum_SGD = 0.9
 
 batch_size = 500 # batch size given to fit function
-epochs = 2
+epochs = 10
 
 # %%============================================================================
 # IMPORT VALIDATION DATA
