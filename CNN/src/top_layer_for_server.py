@@ -33,6 +33,7 @@ FLAGS = flags.FLAGS
 flags.DEFINE_float('lr_Adam', 0.001, 'Adam learning rate')
 flags.DEFINE_float('beta_1_Adam', 0.9, 'Adam beta_1')
 flags.DEFINE_float('beta_2_Adam', 0.999, 'Adam beta_2')
+flags.DEFINE_float('epsilon_Adam', 1e-8, 'Adam epsilon')
 flags.DEFINE_float('lr_RMSProp', 0.001, 'RMSProp learning rate')
 flags.DEFINE_float('lr_SGD', 0.01, 'SGD learning rate')
 flags.DEFINE_float('momentum_SGD', 0.9, 'SGD momentum')
@@ -42,14 +43,14 @@ flags.DEFINE_integer('epochs', 100, 'epochs')
 lr_Adam = FLAGS.lr_Adam
 beta_1_Adam = FLAGS.beta_1_Adam
 beta_2_Adam = FLAGS.beta_2_Adam
-epsilon_Adam = 1e-8
+epsilon_Adam = FLAGS.epsilon_Adam
 lr_RMSProp = FLAGS.lr_RMSProp
 lr_SGD = FLAGS.lr_SGD
 momentum_SGD = FLAGS.momentum_SGD
 batch_size = FLAGS.batch_size
 epochs = FLAGS.epochs
 
-no_labels = 229 # NOTE: This is terrible!
+no_labels = 229 # NOTE: This is actually no_labels+1 and is terrible!
 
 # %%============================================================================
 # IMPORT DATA FOR TRAINING TOP LAYER
