@@ -22,7 +22,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from utils import f1, TrainValTensorBoard
 
 verbose = True
-metrics = Metrics()
 
 # %%============================================================================
 # HYPERPARAMETERS
@@ -76,7 +75,7 @@ model_top_layer.add(Dense(1024, # NOTE: Remove?
                 kernel_initializer='he_uniform',
                 input_shape=(2048,),
                 name='dense_1'))
-model_top_layer.add(Dropout(0.5)) # NOTE: Remove?
+#model_top_layer.add(Dropout(0.5)) # NOTE: Remove?
 model_top_layer.add(Dense(no_labels,
                 kernel_initializer='he_uniform',
                 activation='sigmoid',
