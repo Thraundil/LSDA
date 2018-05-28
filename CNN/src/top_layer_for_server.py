@@ -11,7 +11,7 @@ from keras import backend as K
 from keras import optimizers
 from keras.models import Sequential
 from keras.layers import Activation, AveragePooling2D, Dropout, Dense, Flatten
-from keras.callbacks import Callback, TensorBoard
+from keras.callbacks import Callback, TensorBoard, ModelCheckpoint
 from keras.applications import InceptionV3
 from keras.applications import imagenet_utils
 from keras.applications.inception_v3 import preprocess_input
@@ -19,7 +19,7 @@ from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import ImageDataGenerator
 
-from utils import f1, Metrics
+from utils import f1, TrainValTensorBoard
 
 verbose = True
 metrics = Metrics()
@@ -39,6 +39,8 @@ momentum_SGD = 0.9
 batch_size_top_layer = 1000
 epochs_top_layer = 100
 
+no_labels = 229 # NOTE: This is terrible!
+
 # %%============================================================================
 # IMPORT DATA FOR TRAINING TOP LAYER
 #===============================================================================
@@ -54,6 +56,9 @@ f = h5py.File(os.path.join(FEATURES_FOLDER, DATASET, 'incept.hdf5'));
 train_features = f['a'][1:]
 f.close()
 train_labels = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:]
+if verbose:
+    print('CNN features from training set shape: ', train_features.shape)
+    print('CNN labels from training set shape: ', train_labels.shape, '\n')
 
 # Load validation CNN features
 DATASET = 'validation'
@@ -61,9 +66,6 @@ f = h5py.File(os.path.join(FEATURES_FOLDER, DATASET, 'incept.hdf5'));
 validation_features = f['a'][1:]
 f.close()
 validation_labels = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:]
-
-# if verbose:
-#     print('CNN_features shape: ', CNN_features.shape, '\n')
 
 # %%============================================================================
 # BUILD TOP LAYER
@@ -99,12 +101,22 @@ model_top_layer.compile(optimizer=adam,
 if verbose:
     print('Training top layer..')
 
-tbCallBack = TensorBoard(log_dir='./Tensorboard/toplayer/logs_%s'%time.time(),
-                         histogram_freq=0,
-                         write_graph=True,
-                         write_images=True)
+# Callbacks
+tbCallBack = TrainValTensorBoard(log_dir='./Tensorboard/',
+                                 histogram_freq=0,
+                                 write_graph=True,
+                                 write_images=True)
+# Checkpoint
+filepath = 'best_model_and_weights_top_layer_{val_f1:.2f}.h5'
+checkpoint = ModelCheckpoint(filepath,
+                             monitor='val_f1',
+                             verbose=1,
+                             save_best_only=True,
+                             mode='max')
 
 model_top_layer.fit(train_features, train_labels,
           epochs=epochs_top_layer,
           batch_size=batch_size_top_layer,
-          callbacks=[tbCallBack, metrics]) # , validation_data=(validation_data, validation_labels) # NOTE: Use val!
+          callbacks=[checkpoint, tbCallBack],
+          validation_data = (validation_features, validation_labels))
+          # , validation_data=(validation_data, validation_labels)
