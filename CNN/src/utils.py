@@ -53,6 +53,19 @@ def f1(y_true, y_pred):
     recall = recall(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
+def load_image(params):
+    """
+    function for loading an image into memory
+    """
+    i, image_file = params
+    try:
+        image = load_img(os.path.join('../data/raw_images/train/', image_file), target_size=(299, 299)) 
+        image = img_to_array(image)
+        return (i, image)
+    except:
+        print('Failed to load image %s'%image_file) 
+        return (i, np.zeros(299, 299, 3))
+
 
 class TrainValTensorBoard(TensorBoard):
     """

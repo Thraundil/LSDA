@@ -4,6 +4,7 @@ import numpy as np
 import time
 import h5py
 from tqdm import tqdm
+import multiprocessing
 
 import tensorflow as tf
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
@@ -20,7 +21,7 @@ from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import ImageDataGenerator
 
-from utils import f1, TrainValTensorBoard
+from utils import f1, TrainValTensorBoard, load_image
 
 verbose = True
 
@@ -43,6 +44,8 @@ lr_SGD = FLAGS.lr_SGD # suggested very low
 momentum_SGD = FLAGS.momentum_SGD
 batch_size = FLAGS.batch_size
 epochs = FLAGS.epochs
+
+img_size = 299 # each RGB image has shape (img_size, img_size, 3) with values in (0;255)
 
 # %%============================================================================
 # IMPORT VALIDATION DATA
@@ -97,7 +100,7 @@ model_full.add(AveragePooling2D(pool_size=(8,8)))
 model_full.add(Flatten())
 
 # Load top layer with weights
-model_top_layer = load_model('best_model_and_weights_top_layer_0.48.h5',custom_objects = {'f1':f1})
+model_top_layer = load_model('best_model_and_weights_top_layer_0.51.h5',custom_objects = {'f1':f1})
 
 # Add top layer to full model
 model_full.add(model_top_layer)
@@ -180,34 +183,37 @@ train_dir = '../data/raw_images/train/'
 image_files = os.listdir(train_dir)
 image_files = np.random.permutation(image_files)
 no_imgs_tot = len(image_files)
-img_size = 299 # each RGB image has shape (img_size, img_size, 3) with values in (0;255)
 
 # y_train (labels)
 annotations_dir = '../data/labels/train/labels.npz'
 train_labels = np.load(annotations_dir)['arr_0']
 
-for iteration in range(int(no_imgs_tot/no_imgs_batch+1)):
-    # Load data
-    print('Iteration: %s'%iteration)
-    subset = image_files[(iteration*no_imgs_batch):((iteration+1)*no_imgs_batch)]
-    indices = [int(image_file.split('.')[0]) for image_file in subset]
+# pool for leading images into ram
+pool = multiprocessing.Pool(processes=10)
 
-    # Load and store features (x_train) in batches
-    x_train = np.zeros((no_imgs_batch, img_size, img_size, 3))
-    for i,image_file in enumerate(subset):
-        try:
-            image = load_img(os.path.join(train_dir,image_file), target_size=(img_size, img_size)) # NOTE: Speed up using multithreading!
-            image = img_to_array(image)
+meta_epochs_per_epoch = int(no_imgs_tot/no_imgs_batch+1)
+for epoch in range(0,epochs):
+    for iteration in range(meta_epochs_per_epoch):
+        # Load data
+        print('Loading images')
+        print('Epoch %i, Meta batch %i' % (epoch, iteration))
+        subset = image_files[(iteration*no_imgs_batch):((iteration+1)*no_imgs_batch)]
+        indices = [int(image_file.split('.')[0]) for image_file in subset]
+
+        # Load and store features (x_train) in batches
+        x_train = np.zeros((no_imgs_batch, img_size, img_size, 3))
+
+        for (i, image) in pool.imap_unordered(load_image, (enumerate(subset))):
             x_train[i,:,:,:] = image
-        except:
-            print('Failed to load image %s'%image_file)
 
-    # Load and store labels (y_train)
-    y_train = train_labels[indices] # full annotations matrix is padded with one zero row and column, and has shape (no_imgs_tot+1,no_labels+1)
+        # Load and store labels (y_train)
+        y_train = train_labels[indices] # full annotations matrix is padded with one zero row and column, and has shape (no_imgs_tot+1,no_labels+1)
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Perform the fit $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-    model_full.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
-                             epochs=epochs,
-                             callbacks=[checkpoint, tbCallBack],
-                             validation_data = (x_val, y_val))
-                             # steps_per_epoch=no_imgs_batch/32, samples_per_epoch = no_imgs_batch
+        print('predicting')
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Perform the fit $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        model_full.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
+                                 epochs=2,
+                                 callbacks=[checkpoint, tbCallBack],
+                                 validation_data = (x_val, y_val),
+                                 initial_epoch=(epoch * meta_epochs_per_epoch + iteration))
+                                 # steps_per_epoch=no_imgs_batch/32, samples_per_epoch = no_imgs_batch
