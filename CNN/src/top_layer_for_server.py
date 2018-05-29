@@ -30,6 +30,7 @@ verbose = True
 # Flags
 flags = tf.app.flags
 FLAGS = flags.FLAGS
+flags.DEFINE_string('opt_choice', 'adam', 'Choice of optimizer. Valid input are "adam", "RMSProp" and "SGD"')
 flags.DEFINE_float('lr_Adam', 0.001, 'Adam learning rate')
 flags.DEFINE_float('beta_1_Adam', 0.9, 'Adam beta_1')
 flags.DEFINE_float('beta_2_Adam', 0.999, 'Adam beta_2')
@@ -40,7 +41,9 @@ flags.DEFINE_float('momentum_SGD', 0.9, 'SGD momentum')
 flags.DEFINE_integer('batch_size', 1000, 'batch size')
 flags.DEFINE_integer('epochs', 100, 'epochs')
 
+opt_choice = FLAGS.opt_choice
 lr_Adam = FLAGS.lr_Adam
+print(lr_Adam)
 beta_1_Adam = FLAGS.beta_1_Adam
 beta_2_Adam = FLAGS.beta_2_Adam
 epsilon_Adam = FLAGS.epsilon_Adam
@@ -50,7 +53,10 @@ momentum_SGD = FLAGS.momentum_SGD
 batch_size = FLAGS.batch_size
 epochs = FLAGS.epochs
 
-no_labels = 229 # NOTE: This is actually no_labels+1 and is terrible!
+no_labels = 229 # NOTE: This is actually no_labels+1 and is objectively terrible!
+
+print(opt_choice)
+assert(1 == 0)
 
 # %%============================================================================
 # IMPORT DATA FOR TRAINING TOP LAYER
@@ -93,15 +99,18 @@ model_top_layer.add(Dense(no_labels,
                 name='dense_2'))
 
 # Choose and tune optimizer (Adam, RMSProp or SGD)
-adam = optimizers.Adam(lr=lr_Adam,
-                      beta_1=beta_1_Adam,
-                      beta_2=beta_2_Adam,
-                      epsilon=epsilon_Adam) # NOTE: epsilon=None is default
-RMSProp = optimizers.RMSprop(lr=lr_RMSProp) # we should only tune lr
-SGD = optimizers.SGD(lr=lr_SGD, momentum=momentum_SGD)
+if opt_choice == 'adam':
+    opt = optimizers.Adam(lr=lr_Adam,
+                          beta_1=beta_1_Adam,
+                          beta_2=beta_2_Adam,
+                          epsilon=epsilon_Adam) # NOTE: epsilon=None is default
+elif opt_choise == 'RMSProp':
+    opt = optimizers.RMSprop(lr=lr_RMSProp) # we should only tune lr
+else opt_choise == 'SGD':
+    opt = optimizers.SGD(lr=lr_SGD, momentum=momentum_SGD)
 
 # Compile model
-model_top_layer.compile(optimizer=adam,
+model_top_layer.compile(optimizer=opt,
               loss='categorical_crossentropy',
               metrics=['accuracy', f1])
 

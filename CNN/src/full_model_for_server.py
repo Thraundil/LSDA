@@ -5,6 +5,7 @@ import time
 import h5py
 from tqdm import tqdm
 
+import tensorflow as tf
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score
 
 from keras import backend as K
@@ -26,12 +27,20 @@ verbose = True
 # %%============================================================================
 # HYPERPARAMETERS
 #===============================================================================
-no_imgs_batch = 4000 # number of images loaded into memory. The "meta-batch"
-lr_SGD = 1e-4 # suggested very low lr
-momentum_SGD = 0.9
+# Flags
+flags = tf.app.flags
+FLAGS = flags.FLAGS
+flags.DEFINE_integer('no_imgs_batch', 4000, 'number of images loaded into memory. The "meta-batch"')
+flags.DEFINE_float('lr_SGD', 1e-4, 'SGD learning rate')
+flags.DEFINE_float('momentum_SGD', 0.9, 'SGD momentum')
+flags.DEFINE_integer('batch_size', 500, 'batch size given to fit function')
+flags.DEFINE_integer('epochs', 10, 'number of epochs given to fit function')
 
-batch_size = 500 # batch size given to fit function
-epochs = 10
+no_imgs_batch = FLAGS.no_imgs_batch 
+lr_SGD = FLAGS.lr_SGD # suggested very low
+momentum_SGD = FLAGS.momentum_SGD
+batch_size = FLAGS.batch_size
+epochs = FLAGS.epochs
 
 # %%============================================================================
 # IMPORT VALIDATION DATA
