@@ -106,7 +106,7 @@ if opt_choice == 'adam':
                           epsilon=epsilon_Adam) # NOTE: epsilon=None is default
 elif opt_choice == 'RMSProp':
     opt = optimizers.RMSprop(lr=lr_RMSProp) # we should only tune lr
-else opt_choice == 'SGD':
+elif opt_choice == 'SGD':
     opt = optimizers.SGD(lr=lr_SGD, momentum=momentum_SGD)
 
 # Compile model
