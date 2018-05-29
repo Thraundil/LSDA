@@ -30,7 +30,7 @@ verbose = False
 # Flags
 flags = tf.app.flags
 FLAGS = flags.FLAGS
-flags.DEFINE_string('opt_choice', 'adam', 'Choice of optimizer. Valid input are "adam", "RMSProp" and "SGD"')
+flags.DEFINE_string('opt_choice', 'adam', 'Choice of optimizer. Valid options are "adam", "RMSProp" and "SGD"')
 flags.DEFINE_float('lr_Adam', 0.001, 'Adam learning rate')
 flags.DEFINE_float('beta_1_Adam', 0.9, 'Adam beta_1')
 flags.DEFINE_float('beta_2_Adam', 0.999, 'Adam beta_2')
@@ -38,6 +38,7 @@ flags.DEFINE_float('epsilon_Adam', 1e-8, 'Adam epsilon')
 flags.DEFINE_float('lr_RMSProp', 0.001, 'RMSProp learning rate')
 flags.DEFINE_float('lr_SGD', 0.01, 'SGD learning rate')
 flags.DEFINE_float('momentum_SGD', 0.9, 'SGD momentum')
+flags.DEFINE_boolean('nesterov_SGD', False, 'Boolean. Whether or not use Nesterov momentum for SGD.')
 flags.DEFINE_integer('batch_size', 1000, 'batch size')
 flags.DEFINE_integer('epochs', 100, 'epochs')
 
@@ -49,6 +50,7 @@ epsilon_Adam = FLAGS.epsilon_Adam
 lr_RMSProp = FLAGS.lr_RMSProp
 lr_SGD = FLAGS.lr_SGD
 momentum_SGD = FLAGS.momentum_SGD
+nesterov_SGD = FLAGS.nesterov_SGD
 batch_size = FLAGS.batch_size
 epochs = FLAGS.epochs
 
@@ -104,7 +106,9 @@ if opt_choice == 'adam':
 elif opt_choice == 'RMSProp':
     opt = optimizers.RMSprop(lr=lr_RMSProp) # we should only tune lr
 elif opt_choice == 'SGD':
-    opt = optimizers.SGD(lr=lr_SGD, momentum=momentum_SGD)
+    opt = optimizers.SGD(lr=lr_SGD,
+                         momentum=momentum_SGD,
+                         nesterov=nesterov_SGD)
 
 # Compile model
 model_top_layer.compile(optimizer=opt,
