@@ -83,16 +83,15 @@ validation_labels = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))[
 # BUILD TOP LAYER
 #===============================================================================
 model_top_layer = Sequential()
-model_top_layer.add(Dense(1024, # NOTE: Remove?
-                activation='relu',
-                kernel_initializer='he_uniform',
-                input_shape=(2048,),
-                name='dense_1'))
+# model_top_layer.add(Dense(1024, # NOTE: Remove?
+#                 activation='relu',
+#                 kernel_initializer='he_uniform',
+#                 input_shape=(2048,)))
 #model_top_layer.add(Dropout(0.5)) # NOTE: Remove?
 model_top_layer.add(Dense(no_labels,
+                input_shape=(2048,),
                 kernel_initializer='he_uniform',
-                activation='sigmoid',
-                name='dense_2'))
+                activation='sigmoid'))
 
 # Choose and tune optimizer (Adam, RMSProp or SGD)
 if opt_choice == 'adam':
