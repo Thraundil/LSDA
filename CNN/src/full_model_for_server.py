@@ -36,7 +36,8 @@ flags.DEFINE_string('opt_choice', 'SGD', 'Choice of optimizer. Valid input are "
 flags.DEFINE_float('lr_SGD', 1e-4, 'SGD learning rate')
 flags.DEFINE_float('momentum_SGD', 0.9, 'SGD momentum')
 flags.DEFINE_integer('batch_size', 500, 'batch size given to fit function')
-flags.DEFINE_integer('epochs', 10, 'number of epochs given to fit function')
+flags.DEFINE_integer('epochs', 10, 'number of epochs to train')
+flags.DEFINE_integer('meta_epochs', 2, 'number of epochs to train on each meta-batch')
 
 opt_choice = FLAGS.opt_choice
 no_imgs_batch = FLAGS.no_imgs_batch
@@ -44,6 +45,7 @@ lr_SGD = FLAGS.lr_SGD # suggested very low
 momentum_SGD = FLAGS.momentum_SGD
 batch_size = FLAGS.batch_size
 epochs = FLAGS.epochs
+meta_epochs = FLAGS.meta_epochs
 
 img_size = 299 # each RGB image has shape (img_size, img_size, 3) with values in (0;255)
 
@@ -211,9 +213,11 @@ for epoch in range(0,epochs):
 
         print('predicting')
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Perform the fit $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        start_epoch = (epoch * meta_epochs_per_epoch + iteration) * meta_epochs
+        end_epoch = start_epoch + meta_epochs
         model_full.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
-                                 epochs=2,
+                                 epochs=end_epoch,
                                  callbacks=[checkpoint, tbCallBack],
                                  validation_data = (x_val, y_val),
-                                 initial_epoch=(epoch * meta_epochs_per_epoch + iteration))
+                                 initial_epoch=start_epoch)
                                  # steps_per_epoch=no_imgs_batch/32, samples_per_epoch = no_imgs_batch
