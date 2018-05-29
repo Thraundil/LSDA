@@ -22,7 +22,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from utils import f1, TrainValTensorBoard
 
-verbose = True
+verbose = False
 
 # %%============================================================================
 # HYPERPARAMETERS
