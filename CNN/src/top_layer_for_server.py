@@ -90,9 +90,6 @@ model_top_layer.add(Dense(1024, # NOTE: Remove?
 model_top_layer.add(Dense(1024, # NOTE: Remove?
                 activation='relu',
                 kernel_initializer='he_uniform'))
-model_top_layer.add(Dense(1024, # NOTE: Remove?
-                activation='relu',
-                kernel_initializer='he_uniform'))
 #model_top_layer.add(Dropout(0.5)) # NOTE: Remove?
 model_top_layer.add(Dense(no_labels,
                 kernel_initializer='he_uniform',
