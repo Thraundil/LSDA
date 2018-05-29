@@ -43,7 +43,6 @@ flags.DEFINE_integer('epochs', 100, 'epochs')
 
 opt_choice = FLAGS.opt_choice
 lr_Adam = FLAGS.lr_Adam
-print(lr_Adam)
 beta_1_Adam = FLAGS.beta_1_Adam
 beta_2_Adam = FLAGS.beta_2_Adam
 epsilon_Adam = FLAGS.epsilon_Adam
@@ -54,9 +53,6 @@ batch_size = FLAGS.batch_size
 epochs = FLAGS.epochs
 
 no_labels = 229 # NOTE: This is actually no_labels+1 and is objectively terrible!
-
-print(opt_choice)
-assert(1 == 0)
 
 # %%============================================================================
 # IMPORT DATA FOR TRAINING TOP LAYER

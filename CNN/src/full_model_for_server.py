@@ -31,12 +31,14 @@ verbose = True
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_integer('no_imgs_batch', 4000, 'number of images loaded into memory. The "meta-batch"')
+flags.DEFINE_string('opt_choice', 'SGD', 'Choice of optimizer. Valid input are "adam", "RMSProp" and "SGD"')
 flags.DEFINE_float('lr_SGD', 1e-4, 'SGD learning rate')
 flags.DEFINE_float('momentum_SGD', 0.9, 'SGD momentum')
 flags.DEFINE_integer('batch_size', 500, 'batch size given to fit function')
 flags.DEFINE_integer('epochs', 10, 'number of epochs given to fit function')
 
-no_imgs_batch = FLAGS.no_imgs_batch 
+opt_choice = FLAGS.opt_choice
+no_imgs_batch = FLAGS.no_imgs_batch
 lr_SGD = FLAGS.lr_SGD # suggested very low
 momentum_SGD = FLAGS.momentum_SGD
 batch_size = FLAGS.batch_size
@@ -100,11 +102,19 @@ model_top_layer = load_model('best_model_and_weights_top_layer_0.48.h5',custom_o
 # Add top layer to full model
 model_full.add(model_top_layer)
 
-# Choose and tune optimizer
-SGD_full = optimizers.SGD(lr=lr_SGD, momentum=momentum_SGD)
+# Choose and tune optimizer (Adam, RMSProp or SGD)
+if opt_choice == 'adam':
+    opt = optimizers.Adam(lr=lr_Adam,
+                          beta_1=beta_1_Adam,
+                          beta_2=beta_2_Adam,
+                          epsilon=epsilon_Adam) # NOTE: epsilon=None is default
+elif opt_choice == 'RMSProp':
+    opt = optimizers.RMSprop(lr=lr_RMSProp) # we should only tune lr
+elif opt_choice == 'SGD':
+    opt = optimizers.SGD(lr=lr_SGD, momentum=momentum_SGD)
 
 # Compile model
-model_full.compile(optimizer=SGD_full,
+model_full.compile(optimizer=opt,
                    loss='categorical_crossentropy',
                    metrics=['accuracy',f1])
 
