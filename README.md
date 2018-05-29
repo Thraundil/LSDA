@@ -69,6 +69,7 @@ Source into tensorflow enviroment:
 * Find a way to implement real-time (or almost) feedback during training. 
 * Using a pre-trained model tutorials: https://keras.io/applications/, https://www.learnopencv.com/keras-tutorial-fine-tuning-using-pre-trained-models/.
 * Remember to use the Keras function preprocess_input().
+* Why SGD is batch-size-dependent: https://stats.stackexchange.com/questions/316464/how-does-batch-size-affect-convergence-of-sgd-and-why
 ### Notes for Sunday:
 * Setup framework for loading batches (of 1k or 10k images) - can new batch be loaded while training on previous one?
 * Make sure that images and labels match 
