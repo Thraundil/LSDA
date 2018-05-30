@@ -61,6 +61,7 @@ def load_image(params):
     try:
         image = load_img(os.path.join('../data/raw_images/train/', image_file), target_size=(299, 299)) 
         image = img_to_array(image)
+        image = image/255
         return (i, image)
     except:
         print('Failed to load image %s'%image_file) 

@@ -139,4 +139,6 @@ model_top_layer.fit(train_features, train_labels,
           batch_size=batch_size,
           callbacks=[checkpoint, tbCallBack],
           validation_data = (validation_features, validation_labels))
-          # , validation_data=(validation_data, validation_labels)
+
+#print(model_top_layer.layers[0].get_weights())
+#model_top_layer.save_weights('top_layer_weights_test.h5')

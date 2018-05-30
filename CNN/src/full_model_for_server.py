@@ -31,16 +31,26 @@ verbose = True
 # Flags
 flags = tf.app.flags
 FLAGS = flags.FLAGS
-flags.DEFINE_integer('no_imgs_batch', 4000, 'number of images loaded into memory. The "meta-batch"')
+flags.DEFINE_integer('no_imgs_batch', 5000, 'number of images loaded into memory. The "meta-batch"')
 flags.DEFINE_string('opt_choice', 'SGD', 'Choice of optimizer. Valid input are "adam", "RMSProp" and "SGD"')
+flags.DEFINE_float('lr_Adam', 0.001, 'Adam learning rate')
+flags.DEFINE_float('beta_1_Adam', 0.9, 'Adam beta_1')
+flags.DEFINE_float('beta_2_Adam', 0.999, 'Adam beta_2')
+flags.DEFINE_float('epsilon_Adam', 1e-8, 'Adam epsilon')
+flags.DEFINE_float('lr_RMSProp', 0.001, 'RMSProp learning rate')
 flags.DEFINE_float('lr_SGD', 1e-4, 'SGD learning rate')
 flags.DEFINE_float('momentum_SGD', 0.9, 'SGD momentum')
-flags.DEFINE_integer('batch_size', 500, 'batch size given to fit function')
+flags.DEFINE_integer('batch_size', 100, 'batch size given to fit function')
 flags.DEFINE_integer('epochs', 10, 'number of epochs to train')
-flags.DEFINE_integer('meta_epochs', 2, 'number of epochs to train on each meta-batch')
+flags.DEFINE_integer('meta_epochs', 1, 'number of epochs to train on each meta-batch')
 
 opt_choice = FLAGS.opt_choice
 no_imgs_batch = FLAGS.no_imgs_batch
+lr_Adam = FLAGS.lr_Adam
+beta_1_Adam = FLAGS.beta_1_Adam
+beta_2_Adam = FLAGS.beta_2_Adam
+epsilon_Adam = FLAGS.epsilon_Adam
+lr_RMSProp = FLAGS.lr_RMSProp
 lr_SGD = FLAGS.lr_SGD # suggested very low
 momentum_SGD = FLAGS.momentum_SGD
 batch_size = FLAGS.batch_size
@@ -68,6 +78,7 @@ for i,image_file in enumerate(val_image_files):
     try:
         image = load_img(os.path.join(val_dir,image_file), target_size=(img_size, img_size))
         image = img_to_array(image)
+        image = image/255
         x_val[i,:,:,:] = image
     except:
         print('Failed to load image %s'%image_file)
@@ -104,7 +115,7 @@ model_full.add(Flatten())
 # Load top layer with weights
 model_top_layer = load_model('best_model_and_weights_top_layer_0.51.h5',custom_objects = {'f1':f1})
 
-# Add top layer to full model
+# add top layers
 model_full.add(model_top_layer)
 
 # Choose and tune optimizer (Adam, RMSProp or SGD)
@@ -123,34 +134,34 @@ model_full.compile(optimizer=opt,
                    loss='categorical_crossentropy',
                    metrics=['accuracy',f1])
 
-# if verbose:
-#     print('')
-#     print('Full model compiled.')
-#     print('Here are some details regarding the architecture:')
-#     for i,chunk in enumerate(model_full.layers):
-#         if i == 0: # unpack CNN
-#             print('CNN layers:')
-#             print('First CNN layer input shape: ', chunk.layers[0].input_shape)
-#             print('...')
-#             print('Last CNN layer output shape: ', chunk.layers[-1].output_shape, '\n')
-#         if i == 1: # Flatten layer
-#             print('Flatten layer:')
-#             print('Flatten layer input shape: ', chunk.input_shape)
-#             print('Flatten layer output shape: ', chunk.output_shape, '\n')
-#         if i == 2: # AveragePooling2D
-#             print('Average pooling layer:')
-#             print('AvPool layer input shape: ', chunk.input_shape)
-#             print('AvPool layer output shape: ', chunk.output_shape, '\n')
-#         if i == 3: # unpack top_layer
-#             print('Top layers:')
-#             print('First top_layer layer input shape: ', chunk.layers[0].input_shape)
-#             print('...')
-#             print('Last top_layer layer output shape: ', chunk.layers[-1].output_shape, '\n')
-#             # for j,layer in enumerate(chunk.layers):
-#             #     print(f'Layer {j} input shape: ', layer.input_shape)
-#             #     print(f'Layer {j} output shape: ', layer.output_shape)
-#     # from keras.utils import plot_model
-#     # plot_model(model_full, to_file='full_model.png', show_shapes=True) # spits out a flow-chart of the model
+if False:
+    print('')
+    print('Full model compiled.')
+    print('Here are some details regarding the architecture:')
+    for i,chunk in enumerate(model_full.layers):
+        if i == 0: # unpack CNN
+            print('CNN layers:')
+            print('First CNN layer input shape: ', chunk.layers[0].input_shape)
+            print('...')
+            print('Last CNN layer output shape: ', chunk.layers[-1].output_shape, '\n')
+        if i == 1: # Flatten layer
+            print('Flatten layer:')
+            print('Flatten layer input shape: ', chunk.input_shape)
+            print('Flatten layer output shape: ', chunk.output_shape, '\n')
+        if i == 2: # AveragePooling2D
+            print('Average pooling layer:')
+            print('AvPool layer input shape: ', chunk.input_shape)
+            print('AvPool layer output shape: ', chunk.output_shape, '\n')
+        if i == 3: # unpack top_layer
+            print('Top layers:')
+            print('First top_layer layer input shape: ', chunk.layers[0].input_shape)
+            print('...')
+            print('Last top_layer layer output shape: ', chunk.layers[-1].output_shape, '\n')
+            # for j,layer in enumerate(chunk.layers):
+            #     print(f'Layer {j} input shape: ', layer.input_shape)
+            #     print(f'Layer {j} output shape: ', layer.output_shape)
+    # from keras.utils import plot_model
+    # plot_model(model_full, to_file='full_model.png', show_shapes=True) # spits out a flow-chart of the model
 
 # %%============================================================================
 # FINE-TUNE FULL MODEL IN BATCHES OF LOADED DATA
@@ -197,21 +208,23 @@ meta_epochs_per_epoch = int(no_imgs_tot/no_imgs_batch+1)
 for epoch in range(0,epochs):
     for iteration in range(meta_epochs_per_epoch):
         # Load data
-        print('Loading images')
         print('Epoch %i, Meta batch %i' % (epoch, iteration))
+        
+        # draw subset from unordered list
         subset = image_files[(iteration*no_imgs_batch):((iteration+1)*no_imgs_batch)]
+        
+        # extract image numbers
         indices = [int(image_file.split('.')[0]) for image_file in subset]
 
         # Load and store features (x_train) in batches
         x_train = np.zeros((no_imgs_batch, img_size, img_size, 3))
 
-        for (i, image) in pool.imap_unordered(load_image, (enumerate(subset))):
+        for (i, image) in pool.imap_unordered(load_image, (list(enumerate(subset)))):
             x_train[i,:,:,:] = image
-
+            
         # Load and store labels (y_train)
         y_train = train_labels[indices] # full annotations matrix is padded with one zero row and column, and has shape (no_imgs_tot+1,no_labels+1)
 
-        print('predicting')
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Perform the fit $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         start_epoch = (epoch * meta_epochs_per_epoch + iteration) * meta_epochs
         end_epoch = start_epoch + meta_epochs
@@ -220,4 +233,5 @@ for epoch in range(0,epochs):
                                  callbacks=[checkpoint, tbCallBack],
                                  validation_data = (x_val, y_val),
                                  initial_epoch=start_epoch)
+        del x_train, y_train
                                  # steps_per_epoch=no_imgs_batch/32, samples_per_epoch = no_imgs_batch
