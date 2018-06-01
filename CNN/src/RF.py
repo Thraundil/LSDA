@@ -41,9 +41,6 @@ f = h5py.File(os.path.join(FEATURES_FOLDER, DATASET, 'incept.hdf5'));
 x_train = f['a'][1:]
 f.close()
 y_train = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:,1:] # NOTE: Labels are now of size 229 instead of 228!
-if verbose:
-    print('CNN features from training set shape: ', x_train.shape)
-    print('CNN labels from training set shape: ', y_train.shape, '\n')
 
 # Load validation CNN features
 DATASET = 'validation'
@@ -51,6 +48,18 @@ f = h5py.File(os.path.join(FEATURES_FOLDER, DATASET, 'incept.hdf5'));
 x_val = f['a'][1:]
 f.close()
 y_val = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:,1:]
+
+label_indices_rm = np.where(y_train.sum(axis=0) < 2)
+y_train = np.delete(y_train, label_indices_rm, axis=1)
+y_val = np.delete(y_val, label_indices_rm, axis=1)
+
+print(len(label_indices_rm), ' labels had fewer than two instances and were removed.')
+
+if verbose:
+    print('CNN features from training set shape: ', x_train.shape)
+    print('CNN labels from training set shape: ', y_train.shape, '\n')
+    print('CNN features from validation set shape: ', x_val.shape)
+    print('CNN labels from validation set shape: ', y_val.shape, '\n')
 
 # %%============================================================================
 # TRAIN RANDOM FORESTS ON SUBSETS OF FEATURES, THEN COMBINE THEM
