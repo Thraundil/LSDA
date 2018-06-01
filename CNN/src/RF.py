@@ -38,7 +38,7 @@ LABELS_FOLDER = '/mnt/LSDA/labels'
 # Load training CNN features
 DATASET = 'train'
 f = h5py.File(os.path.join(FEATURES_FOLDER, DATASET, 'incept.hdf5'));
-x_train = f['a'][1:,1:]
+x_train = f['a'][1:]
 f.close()
 y_train = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:,1:] # NOTE: Labels are now of size 229 instead of 228!
 if verbose:
@@ -48,7 +48,7 @@ if verbose:
 # Load validation CNN features
 DATASET = 'validation'
 f = h5py.File(os.path.join(FEATURES_FOLDER, DATASET, 'incept.hdf5'));
-x_val = f['a'][1:1,:]
+x_val = f['a'][1:]
 f.close()
 y_val = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:,1:]
 
