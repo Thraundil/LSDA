@@ -7,6 +7,7 @@ import tensorflow as tf
 from functools import reduce
 from sklearn.metrics import f1_score
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.externals import joblib
 
 flags = tf.app.flags
