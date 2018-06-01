@@ -49,18 +49,11 @@ x_val = f['a'][1:]
 f.close()
 y_val = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:,1:]
 
-if verbose:
-    print('CNN features from training set shape: ', x_train.shape)
-    print('CNN labels from training set shape: ', y_train.shape, '\n')
-    print('CNN features from validation set shape: ', x_val.shape)
-    print('CNN labels from validation set shape: ', y_val.shape, '\n')
-    print(y_train.sum(axis=0).shape, '\n')
-
-label_indices_rm = np.where(y_train.sum(axis=0) < 2)
-print(label_indices_rm)
+# Remove labels which are represented fewer than two times in the training set,
+# since this messes with StratifiedShuffleSplit below.
+label_indices_rm = np.where(y_train.sum(axis=0) < 2)[0]
 y_train = np.delete(y_train, label_indices_rm, axis=1)
 y_val = np.delete(y_val, label_indices_rm, axis=1)
-
 print(len(label_indices_rm), ' labels had fewer than two instances and were removed.')
 
 if verbose:
