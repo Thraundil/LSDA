@@ -54,14 +54,18 @@ y_val = np.load(os.path.join(LABELS_FOLDER, DATASET, 'labels.npz'))['arr_0'][1:,
 label_indices_rm = np.where(y_train.sum(axis=0) < 2)[0]
 y_train = np.delete(y_train, label_indices_rm, axis=1)
 y_val = np.delete(y_val, label_indices_rm, axis=1)
-print(len(label_indices_rm), ' labels had fewer than two instances and were removed.')
 
 if verbose:
+    print(len(label_indices_rm), ' labels had fewer than two instances and were removed.')
     print('CNN features from training set shape: ', x_train.shape)
     print('CNN labels from training set shape: ', y_train.shape, '\n')
     print('CNN features from validation set shape: ', x_val.shape)
     print('CNN labels from validation set shape: ', y_val.shape, '\n')
     print(np.any(y_train.sum(axis=0) < 2), '\n')
+
+sss = StratifiedShuffleSplit(n_splits=1, train_size=sub_sample_frac)
+indices,_ = sss.split(x_train, y_train) # gives the training indices
+assert(0==1)
 
 # %%============================================================================
 # TRAIN RANDOM FORESTS ON SUBSETS OF FEATURES, THEN COMBINE THEM
