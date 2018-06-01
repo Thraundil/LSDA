@@ -60,6 +60,7 @@ if verbose:
     print('CNN labels from training set shape: ', y_train.shape, '\n')
     print('CNN features from validation set shape: ', x_val.shape)
     print('CNN labels from validation set shape: ', y_val.shape, '\n')
+    print(np.any(y_train.sum(axis=0) < 2), '\n')
 
 # %%============================================================================
 # TRAIN RANDOM FORESTS ON SUBSETS OF FEATURES, THEN COMBINE THEM
