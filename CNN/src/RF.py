@@ -54,7 +54,7 @@ if verbose:
     print('CNN labels from training set shape: ', y_train.shape, '\n')
     print('CNN features from validation set shape: ', x_val.shape)
     print('CNN labels from validation set shape: ', y_val.shape, '\n')
-    print(np.any(y_train.sum(axis=0) < 2), '\n')
+    print(y_train.sum(axis=0).shape, '\n')
 
 label_indices_rm = np.where(y_train.sum(axis=0) < 2)
 print(label_indices_rm)
