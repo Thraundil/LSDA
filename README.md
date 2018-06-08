@@ -75,3 +75,11 @@ Source into tensorflow enviroment:
 * Make sure that images and labels match 
 * Figure out how to load only batches of CNN_features into memory
 * Boosting? Not really possible: https://stackoverflow.com/questions/39063676/how-to-boost-a-keras-based-neural-network-using-adaboost
+
+### What to include in the report/presentation
+* Choice of approach: Incv3 (small, good performance) with new top-layer, then retrain last layer of Inv3.
+* We experimented a lot with architecture and optimizers, and went with 2x1024 with BN. One layer didn't attain same performance, while three layers didn't perform better. Well-tuned SGD beat ADam, both of which beat RMSProp by far. Regularization was important to avoid overfitting: Drop-out worked horribly (maybe Keras/Tensorboard didn't turn off the drop-out when validating?). L2-reg. was really bad. 
+* Data augmentation: We did data augmentation when training the full model. Data augmentation when training the top layer would have been quite difficult (as we would have had to save the augmented images), since we trained it on the CNN features. We looked into a scheme for augmenting low-freq. labels (for "flattening" the distribution of labels)
+* Test data augmentation
+* Weird "bug" with overfitting when training the top layer from the very beginning - but validation score was still improving. 
+* We only had 30 GBs of server space, which wasn't enough, so we had to put everything on a temp. server drive, which was deleted as soon as we logged out. 
